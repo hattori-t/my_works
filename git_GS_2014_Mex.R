@@ -15,7 +15,7 @@ Geno<-t(geno_trim)
 
 dim(Pheno)#[1] 342  12
 dim(Geno)#[1]    342 127587
-#グラフを色�?けするため�?�準備
+#
 data=rownames(Pheno)
 data1=rep(1,length(data))
 data1[substr(data, 1, 3) == "B2/"] <- 2
