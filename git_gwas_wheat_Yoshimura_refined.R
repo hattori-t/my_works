@@ -1,4 +1,4 @@
-setwd("C:/Users/Tomo/Desktop/wheat/Yoshimura")
+setwd("C:/Users/Tomo/Dropbox/wheat/Yoshimura")
 
 # read marker data, phenotype and map data
 haplo.score <- read.csv("data/SNP_imputed_by_Yoshimura.csv", row.names = 1)
