@@ -3,6 +3,8 @@ setwd("C:/Users/Tomo/Dropbox/sorghum_local/GS_2014_Mex")
 geno <- read.csv("data/inbred_SNP_list_by_stacks_geno_150120_sel1_imputed_trim_score_CMS.csv",row.names=1)
 pheno <- read.csv("data/pheno_mex_2014_inbred_ABEF.csv",row.names=1)
 colnames(geno) <- gsub("_res","",colnames(geno))
+colnames(geno)=gsub("B31.","B31/",colnames(geno))
+colnames(geno)=gsub("B2.","B2/",colnames(geno))
 
 pheno_trim <- na.omit(pheno)
 line <- intersect(rownames(pheno_trim),colnames(geno))
@@ -197,6 +199,8 @@ Predictedvalues.glmnet.ridge <- Prediction.glmnet(Geno, Pheno, Partition, 0)
 #plot
 cor_glmnet.ridge <- NULL
 dir.create("ridge")
+Ntrait <- ncol(Pheno)
+phenolist <- colnames(Pheno)
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
@@ -220,11 +224,14 @@ Predictedvalues.glmnet.elasticnet <- Prediction.glmnet(Geno, Pheno, Partition, 0
 #plot
 cor_glmnet.elasticnet <- NULL
 dir.create("elasticnet")
+Ntrait <- ncol(Pheno)
+phenolist <- colnames(Pheno)
+
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
-    pdf(paste("res/", phenolist[trait], "_2013_glmnet.elasticnet.pdf", sep = ""))    
-	  plot(Pheno[,trait], Predictedvalues.glmnet.elasticnet[,trait], col = data1, pch = data1, xlab = "Ovserved Value", ylab = "Predicted Value", main = 	paste(phenolist[trait],"_2013_glmnet.elasticnet",sep=""))
+    pdf(paste("elasticnet/", phenolist[trait], "_2014_glmnet.elasticnet.pdf", sep = ""))    
+    plot(Pheno[,trait], Predictedvalues.glmnet.elasticnet[,trait], col = data1, pch = data1, xlab = "Ovserved Value", ylab = "Predicted Value", main = 	paste(phenolist[trait],"_2014_glmnet.elasticnet",sep=""))
     abline(0, 1, lty = "dotted")
     Cor <- cor(Pheno[,trait], Predictedvalues.glmnet.elasticnet[,trait], use = "pair")
     Core <- sprintf("%.2f", Cor)
@@ -243,11 +250,16 @@ Predictedvalues.glmnet.lasso <- Prediction.glmnet(Geno, Pheno, Partition, 1)
 #plot
 cor_glmnet.lasso <- NULL
 dir.create("lasso")
+Ntrait <- ncol(Pheno)
+phenolist <- colnames(Pheno)
+
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
     pdf(paste("lasso/", phenolist[trait], "_2014_glmnet.lasso.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.glmnet.lasso[,trait], xlab = "Ovserved Value", ylab = "Predicted Value", col=data1,pch=data1,main = paste(phenolist[trait],"_2014_glmnet.lasso",sep=""))
     abline(0, 1, lty = "dotted")
+    mse <- round(sum((Pheno[,trait] - Predictedvalues.glmnet.lasso[,trait])^2) / length(Pheno[,trait]), 2)
+    rmse <- round(sqrt(mse), 2)
     Cor <- cor(Pheno[,trait], Predictedvalues.glmnet.lasso[,trait], use = "pair")
     Core <- sprintf("%.2f", Cor)
     legend("bottomright", legend = Core, bty = "n")
