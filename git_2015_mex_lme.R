@@ -2,15 +2,8 @@ setwd("C:/Users/Tomo/Dropbox/sorghum_local/2015_Mex_pheno_arrange")
 
 data <- read.csv("data/2015_Mexi_all_data_rev1.csv", row.names = 1)
 
-#substitute "Heading,FL,withoutFL" to "NA"
-data$plant.height <- gsub("Heading", "NA", data$plant.height)
-data$plant.height <- gsub("FL", "NA", data$plant.height)
-data$plant.height <- gsub("withoutFL", "NA", data$plant.height)
-data$plant.height <- as.numeric(data$plant.height)
-data$panicle.length <- gsub("Heading", "NA", data$panicle.length)
-data$panicle.length <- gsub("FL", "NA", data$panicle.length)
-data$panicle.length <- gsub("withoutFL", "NA", data$panicle.length)
-data$panicle.length <- as.numeric(data$panicle.length)
+#panicle.length
+data$panicle.length <- data$plant.height - data$panicle.length
 
 #data checking with boxplot
 boxplot(data$culmnum,main="culmnum")
@@ -25,8 +18,8 @@ boxplot(data$juice,main="juice")
 boxplot(data$brix,main="brix")
 boxplot(data$weight,main="weight")
 
-#brix seems to have an error value.
-#set "culm.diameter>30" to NA.
+#Panicle.length and brix seem to have an error value. Set the limitation.
+data$panicle.length[data$panicle.length<3] <- NA
 data$brix[data$brix>30] <- NA
 
 #At first, let's separate F1xCMS lines
@@ -34,255 +27,179 @@ linename <- read.csv("data/linename_F1xCMS.csv")
 sort <- match(linename$ID,rownames(data))
 F1xCMS <- data[sort,]
 rownames(F1xCMS) <- linename$NAME
-write.csv(F1xCMS, "result/pheno_mex_2014_F1xCMS.csv")
+dir.create("result")
+write.csv(F1xCMS, "result/pheno_mex_2015_F1xCMS.csv")
 
-#separate "A1~2, B1~2, E1~8, F1~8"
+#separate "A~K"
 name <- rownames(data)
 
-dataselecta1 <- data[grep("X...A1", name),]
-dataselecta2 <- data[grep("X...A2", name),]
+dataselecta1 <- data[grep("A..._1", name),]
+dataselecta2 <- data[grep("A..._2", name),]
+dataselectb1 <- data[grep("B..._1", name),]
+dataselectb2 <- data[grep("B..._2", name),]
+dataselectc1 <- data[grep("C..._1", name),]
+dataselectc2 <- data[grep("C..._2", name),]
+dataselectd1 <- data[grep("D..._1", name),]
+dataselectd2 <- data[grep("D..._2", name),]
+dataselecte1 <- data[grep("E.._1", name),]
+dataselecte2 <- data[grep("E.._2", name),]
+dataselectf1 <- data[grep("F.._1", name),]
+dataselectf2 <- data[grep("F.._2", name),]
+dataselectg1 <- data[grep("G.._1", name),]
+dataselectg2 <- data[grep("G.._2", name),]
+dataselecth1 <- data[grep("H.._1", name),]
+dataselecth2 <- data[grep("H.._2", name),]
+dataselecti1 <- data[grep("I.._1", name),]
+dataselecti2 <- data[grep("I.._2", name),]
+dataselectj1 <- data[grep("J.._1", name),]
+dataselectj2 <- data[grep("J.._2", name),]
+dataselectk1 <- data[grep("K.._1", name),]
+dataselectk2 <- data[grep("K.._2", name),]
 
-dataselectb1 <- data[grep("X...B1", name),]
-dataselectb2 <- data[grep("X...B2", name),]
-
-dataselecte1 <- data[grep("X....E1", name),]
-dataselecte2 <- data[grep("X....E2", name),]
-dataselecte3 <- data[grep("X....E3", name),]
-dataselecte4 <- data[grep("X....E4", name),]
-dataselecte5 <- data[grep("X....E5", name),]
-dataselecte6 <- data[grep("X....E6", name),]
-dataselecte7 <- data[grep("X....E7", name),]
-dataselecte8 <- data[grep("X....E8", name),]
-
-dataselectf1 <- data[grep("X....F1", name),]
-dataselectf2 <- data[grep("X....F2", name),]
-dataselectf3 <- data[grep("X....F3", name),]
-dataselectf4 <- data[grep("X....F4", name),]
-dataselectf5 <- data[grep("X....F5", name),]
-dataselectf6 <- data[grep("X....F6", name),]
-dataselectf7 <- data[grep("X....F7", name),]
-dataselectf8 <- data[grep("X....F8", name),]
-
-#change rownames to "MX000"
-dataselecta1M <- paste("M", rownames(dataselecta1), sep = "")
-dataselecta2M <- paste("M", rownames(dataselecta2), sep = "")
-
-dataselectb1M <- paste("M", rownames(dataselectb1), sep = "")
-dataselectb2M <- paste("M", rownames(dataselectb2), sep = "")
-
-dataselecte1M <- paste("M", rownames(dataselecte1), sep = "")
-dataselecte2M <- paste("M", rownames(dataselecte2), sep = "")
-dataselecte3M <- paste("M", rownames(dataselecte3), sep = "")
-dataselecte4M <- paste("M", rownames(dataselecte4), sep = "")
-dataselecte5M <- paste("M", rownames(dataselecte5), sep = "")
-dataselecte6M <- paste("M", rownames(dataselecte6), sep = "")
-dataselecte7M <- paste("M", rownames(dataselecte7), sep = "")
-dataselecte8M <- paste("M", rownames(dataselecte8), sep = "")
-
-dataselectf1M <- paste("M", rownames(dataselectf1), sep = "")
-dataselectf2M <- paste("M", rownames(dataselectf2), sep = "")
-dataselectf3M <- paste("M", rownames(dataselectf3), sep = "")
-dataselectf4M <- paste("M", rownames(dataselectf4), sep = "")
-dataselectf5M <- paste("M", rownames(dataselectf5), sep = "")
-dataselectf6M <- paste("M", rownames(dataselectf6), sep = "")
-dataselectf7M <- paste("M", rownames(dataselectf7), sep = "")
-dataselectf8M <- paste("M", rownames(dataselectf8), sep = "")
-
-dataselecta1M <- substr(dataselecta1M, 1, 5)
-dataselecta2M <- substr(dataselecta2M, 1, 5)
-
-dataselectb1M <- substr(dataselectb1M, 1, 5)
-dataselectb2M <- substr(dataselectb2M, 1, 5)
-
-dataselecte1M <- substr(dataselecte1M, 1, 6)
-dataselecte2M <- substr(dataselecte2M, 1, 6)
-dataselecte3M <- substr(dataselecte3M, 1, 6)
-dataselecte4M <- substr(dataselecte4M, 1, 6)
-dataselecte5M <- substr(dataselecte5M, 1, 6)
-dataselecte6M <- substr(dataselecte6M, 1, 6)
-dataselecte7M <- substr(dataselecte7M, 1, 6)
-dataselecte8M <- substr(dataselecte8M, 1, 6)
-
-dataselectf1M <- substr(dataselectf1M, 1, 6)
-dataselectf2M <- substr(dataselectf2M, 1, 6)
-dataselectf3M <- substr(dataselectf3M, 1, 6)
-dataselectf4M <- substr(dataselectf4M, 1, 6)
-dataselectf5M <- substr(dataselectf5M, 1, 6)
-dataselectf6M <- substr(dataselectf6M, 1, 6)
-dataselectf7M <- substr(dataselectf7M, 1, 6)
-dataselectf8M <- substr(dataselectf8M, 1, 6)
-
-rownames(dataselecta1) <- dataselecta1M
-rownames(dataselecta2) <- dataselecta2M
-
-rownames(dataselectb1) <- dataselectb1M
-rownames(dataselectb2) <- dataselectb2M
-
-rownames(dataselecte1) <- dataselecte1M
-rownames(dataselecte2) <- dataselecte2M
-rownames(dataselecte3) <- dataselecte3M
-rownames(dataselecte4) <- dataselecte4M
-rownames(dataselecte5) <- dataselecte5M
-rownames(dataselecte6) <- dataselecte6M
-rownames(dataselecte7) <- dataselecte7M
-rownames(dataselecte8) <- dataselecte8M
-
-rownames(dataselectf1) <- dataselectf1M
-rownames(dataselectf2) <- dataselectf2M
-rownames(dataselectf3) <- dataselectf3M
-rownames(dataselectf4) <- dataselectf4M
-rownames(dataselectf5) <- dataselectf5M
-rownames(dataselectf6) <- dataselectf6M
-rownames(dataselectf7) <- dataselectf7M
-rownames(dataselectf8) <- dataselectf8M
+#extract linename
+rownames(dataselecta1) <- substr(rownames(dataselecta1), 1, 4)
+rownames(dataselecta2) <- substr(rownames(dataselecta2), 1, 4)
+rownames(dataselectb1) <- substr(rownames(dataselectb1), 1, 4)
+rownames(dataselectb2) <- substr(rownames(dataselectb2), 1, 4)
+rownames(dataselectc1) <- substr(rownames(dataselectc1), 1, 4)
+rownames(dataselectc2) <- substr(rownames(dataselectc2), 1, 4)
+rownames(dataselectd1) <- substr(rownames(dataselectd1), 1, 4)
+rownames(dataselectd2) <- substr(rownames(dataselectd2), 1, 4)
+rownames(dataselecte1) <- substr(rownames(dataselecte1), 1, 3)
+rownames(dataselecte2) <- substr(rownames(dataselecte2), 1, 3)
+rownames(dataselectf1) <- substr(rownames(dataselectf1), 1, 3)
+rownames(dataselectf2) <- substr(rownames(dataselectf2), 1, 3)
+rownames(dataselectg1) <- substr(rownames(dataselectg1), 1, 3)
+rownames(dataselectg2) <- substr(rownames(dataselectg2), 1, 3)
+rownames(dataselecth1) <- substr(rownames(dataselecth1), 1, 3)
+rownames(dataselecth2) <- substr(rownames(dataselecth2), 1, 3)
+rownames(dataselecti1) <- substr(rownames(dataselecti1), 1, 3)
+rownames(dataselecti2) <- substr(rownames(dataselecti2), 1, 3)
+rownames(dataselectj1) <- substr(rownames(dataselectj1), 1, 3)
+rownames(dataselectj2) <- substr(rownames(dataselectj2), 1, 3)
+rownames(dataselectk1) <- substr(rownames(dataselectk1), 1, 3)
+rownames(dataselectk2) <- substr(rownames(dataselectk2), 1, 3)
 
 #read linename info
-linename_AB <- read.csv("data/linename_inbred_AB.csv", row.names = 1)
-linename_EF <- read.csv("data/linename_inbred_EF.csv", row.names = 1)
-lineID_AB <- as.character(linename_AB[,2])
-lineID_EF <- as.character(linename_EF[,2])
-linename_AB <- as.character(linename_AB[,1])
-linename_EF <- as.character(linename_EF[,1])
+linename_info <- read.csv("data/linename_A-K.csv", row.names = 1)
+lineID <- as.character(linename_info[,2])
+linename <- as.character(linename_info[,1])
 
-sortA1 <- match(lineID_AB, rownames(dataselecta1))
-sortA2 <- match(lineID_AB, rownames(dataselecta2))
-
-sortB1 <- match(lineID_AB, rownames(dataselectb1))
-sortB2 <- match(lineID_AB, rownames(dataselectb2))
-
-sortE1 <- match(lineID_EF, rownames(dataselecte1))
-sortE2 <- match(lineID_EF, rownames(dataselecte2))
-sortE3 <- match(lineID_EF, rownames(dataselecte3))
-sortE4 <- match(lineID_EF, rownames(dataselecte4))
-sortE5 <- match(lineID_EF, rownames(dataselecte5))
-sortE6 <- match(lineID_EF, rownames(dataselecte6))
-sortE7 <- match(lineID_EF, rownames(dataselecte7))
-sortE8 <- match(lineID_EF, rownames(dataselecte8))
-
-sortF1 <- match(lineID_EF, rownames(dataselectf1))
-sortF2 <- match(lineID_EF, rownames(dataselectf2))
-sortF3 <- match(lineID_EF, rownames(dataselectf3))
-sortF4 <- match(lineID_EF, rownames(dataselectf4))
-sortF5 <- match(lineID_EF, rownames(dataselectf5))
-sortF6 <- match(lineID_EF, rownames(dataselectf6))
-sortF7 <- match(lineID_EF, rownames(dataselectf7))
-sortF8 <- match(lineID_EF, rownames(dataselectf8))
+sortA1 <- match(lineID, rownames(dataselecta1))
+sortA2 <- match(lineID, rownames(dataselecta2))
+sortB1 <- match(lineID, rownames(dataselectb1))
+sortB2 <- match(lineID, rownames(dataselectb2))
+sortC1 <- match(lineID, rownames(dataselectc1))
+sortC2 <- match(lineID, rownames(dataselectc2))
+sortD1 <- match(lineID, rownames(dataselectd1))
+sortD2 <- match(lineID, rownames(dataselectd2))
+sortE1 <- match(lineID, rownames(dataselecte1))
+sortE2 <- match(lineID, rownames(dataselecte2))
+sortF1 <- match(lineID, rownames(dataselectf1))
+sortF2 <- match(lineID, rownames(dataselectf2))
+sortG1 <- match(lineID, rownames(dataselectg1))
+sortG2 <- match(lineID, rownames(dataselectg2))
+sortH1 <- match(lineID, rownames(dataselecth1))
+sortH2 <- match(lineID, rownames(dataselecth2))
+sortI1 <- match(lineID, rownames(dataselecti1))
+sortI2 <- match(lineID, rownames(dataselecti2))
+sortJ1 <- match(lineID, rownames(dataselectj1))
+sortJ2 <- match(lineID, rownames(dataselectj2))
+sortK1 <- match(lineID, rownames(dataselectk1))
+sortK2 <- match(lineID, rownames(dataselectk2))
 
 dataselecta1sort <- dataselecta1[sortA1,]
 dataselecta2sort <- dataselecta2[sortA2,]
-
 dataselectb1sort <- dataselectb1[sortB1,]
 dataselectb2sort <- dataselectb2[sortB2,]
+dataselectc1sort <- dataselectc1[sortC1,]
+dataselectc2sort <- dataselectc2[sortC2,]
+dataselectd1sort <- dataselectd1[sortD1,]
+dataselectd2sort <- dataselectd2[sortD2,]
+dataselecte1sort <- dataselectb1[sortE1,]
+dataselecte2sort <- dataselectb2[sortE2,]
+dataselectf1sort <- dataselectb1[sortF1,]
+dataselectf2sort <- dataselectb2[sortF2,]
+dataselectg1sort <- dataselectb1[sortG1,]
+dataselectg2sort <- dataselectb2[sortG2,]
+dataselecth1sort <- dataselectb1[sortH1,]
+dataselecth2sort <- dataselectb2[sortH2,]
+dataselecti1sort <- dataselectb1[sortI1,]
+dataselecti2sort <- dataselectb2[sortI2,]
+dataselectj1sort <- dataselectb1[sortJ1,]
+dataselectj2sort <- dataselectb2[sortJ2,]
+dataselectk1sort <- dataselectb1[sortK1,]
+dataselectk2sort <- dataselectb2[sortK2,]
 
-dataselecte1sort <- dataselecte1[sortE1,]
-dataselecte2sort <- dataselecte2[sortE2,]
-dataselecte3sort <- dataselecte3[sortE3,]
-dataselecte4sort <- dataselecte4[sortE4,]
-dataselecte5sort <- dataselecte5[sortE5,]
-dataselecte6sort <- dataselecte6[sortE6,]
-dataselecte7sort <- dataselecte7[sortE7,]
-dataselecte8sort <- dataselecte8[sortE8,]
-
-dataselectf1sort <- dataselecte1[sortF1,]
-dataselectf2sort <- dataselecte2[sortF2,]
-dataselectf3sort <- dataselecte3[sortF3,]
-dataselectf4sort <- dataselecte4[sortF4,]
-dataselectf5sort <- dataselecte5[sortF5,]
-dataselectf6sort <- dataselecte6[sortF6,]
-dataselectf7sort <- dataselecte7[sortF7,]
-dataselectf8sort <- dataselecte8[sortF8,]
-
-rownames(dataselecta1sort) <- lineID_AB
-rownames(dataselecta2sort) <- lineID_AB
-
-rownames(dataselectb1sort) <- lineID_AB
-rownames(dataselectb2sort) <- lineID_AB
-
-rownames(dataselecte1sort) <- lineID_EF
-rownames(dataselecte2sort) <- lineID_EF
-rownames(dataselecte3sort) <- lineID_EF
-rownames(dataselecte4sort) <- lineID_EF
-rownames(dataselecte5sort) <- lineID_EF
-rownames(dataselecte6sort) <- lineID_EF
-rownames(dataselecte7sort) <- lineID_EF
-rownames(dataselecte8sort) <- lineID_EF
-
-rownames(dataselectf1sort) <- lineID_EF
-rownames(dataselectf2sort) <- lineID_EF
-rownames(dataselectf3sort) <- lineID_EF
-rownames(dataselectf4sort) <- lineID_EF
-rownames(dataselectf5sort) <- lineID_EF
-rownames(dataselectf6sort) <- lineID_EF
-rownames(dataselectf7sort) <- lineID_EF
-rownames(dataselectf8sort) <- lineID_EF
+rownames(dataselecta1sort) <- lineID
+rownames(dataselecta2sort) <- lineID
+rownames(dataselectb1sort) <- lineID
+rownames(dataselectb2sort) <- lineID
+rownames(dataselectc1sort) <- lineID
+rownames(dataselectc2sort) <- lineID
+rownames(dataselectd1sort) <- lineID
+rownames(dataselectd2sort) <- lineID
+rownames(dataselecte1sort) <- lineID
+rownames(dataselecte2sort) <- lineID
+rownames(dataselectf1sort) <- lineID
+rownames(dataselectf2sort) <- lineID
+rownames(dataselectg1sort) <- lineID
+rownames(dataselectg2sort) <- lineID
+rownames(dataselecth1sort) <- lineID
+rownames(dataselecth2sort) <- lineID
+rownames(dataselecti1sort) <- lineID
+rownames(dataselecti2sort) <- lineID
+rownames(dataselectj1sort) <- lineID
+rownames(dataselectj2sort) <- lineID
+rownames(dataselectk1sort) <- lineID
+rownames(dataselectk2sort) <- lineID
 
 #combine all data
-linename <- linename_AB
+treatment <- substr(lineID,1,1)
 
-treatment <- rep("A",nrow(dataselecta1sort))
 dataselecta1sortb <- cbind(dataselecta1sort,linename,treatment)
-treatment <- rep("A",nrow(dataselecta2sort))
 dataselecta2sortb <- cbind(dataselecta2sort,linename,treatment)
-
-treatment <- rep("B",nrow(dataselectb1sort))
 dataselectb1sortb <- cbind(dataselectb1sort,linename,treatment)
-treatment <- rep("B",nrow(dataselectb2sort))
 dataselectb2sortb <- cbind(dataselectb2sort,linename,treatment)
-
-linename <- linename_EF
-
-treatment <- rep("E",nrow(dataselecte1sort))
+dataselectc1sortb <- cbind(dataselectc1sort,linename,treatment)
+dataselectc2sortb <- cbind(dataselectc2sort,linename,treatment)
+dataselectd1sortb <- cbind(dataselectd1sort,linename,treatment)
+dataselectd2sortb <- cbind(dataselectd2sort,linename,treatment)
 dataselecte1sortb <- cbind(dataselecte1sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte2sort))
 dataselecte2sortb <- cbind(dataselecte2sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte3sort))
-dataselecte3sortb <- cbind(dataselecte3sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte4sort))
-dataselecte4sortb <- cbind(dataselecte4sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte5sort))
-dataselecte5sortb <- cbind(dataselecte5sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte6sort))
-dataselecte6sortb <- cbind(dataselecte6sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte7sort))
-dataselecte7sortb <- cbind(dataselecte7sort,linename,treatment)
-treatment <- rep("E",nrow(dataselecte8sort))
-dataselecte8sortb <- cbind(dataselecte8sort,linename,treatment)
-
-treatment <- rep("F",nrow(dataselectf1sort))
 dataselectf1sortb <- cbind(dataselectf1sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf2sort))
 dataselectf2sortb <- cbind(dataselectf2sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf3sort))
-dataselectf3sortb <- cbind(dataselectf3sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf4sort))
-dataselectf4sortb <- cbind(dataselectf4sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf5sort))
-dataselectf5sortb <- cbind(dataselectf5sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf6sort))
-dataselectf6sortb <- cbind(dataselectf6sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf7sort))
-dataselectf7sortb <- cbind(dataselectf7sort,linename,treatment)
-treatment <- rep("F",nrow(dataselectf8sort))
-dataselectf8sortb <- cbind(dataselectf8sort,linename,treatment)
+dataselectg1sortb <- cbind(dataselectg1sort,linename,treatment)
+dataselectg2sortb <- cbind(dataselectg2sort,linename,treatment)
+dataselecth1sortb <- cbind(dataselecth1sort,linename,treatment)
+dataselecth2sortb <- cbind(dataselecth2sort,linename,treatment)
+dataselecti1sortb <- cbind(dataselecti1sort,linename,treatment)
+dataselecti2sortb <- cbind(dataselecti2sort,linename,treatment)
+dataselectj1sortb <- cbind(dataselectj1sort,linename,treatment)
+dataselectj2sortb <- cbind(dataselectj2sort,linename,treatment)
+dataselectk1sortb <- cbind(dataselectk1sort,linename,treatment)
+dataselectk2sortb <- cbind(dataselectk2sort,linename,treatment)
 
 alldata <- rbind(dataselecta1sortb,dataselecta2sortb,dataselectb1sortb,dataselectb2sortb,
-                 dataselecte1sortb,dataselecte2sortb,dataselecte3sortb,dataselecte4sortb,
-                 dataselecte5sortb,dataselecte6sortb,dataselecte7sortb,dataselecte8sortb,
-                 dataselectf1sortb,dataselectf2sortb,dataselectf3sortb,dataselectf4sortb,
-                 dataselectf5sortb,dataselectf6sortb,dataselectf7sortb,dataselectf8sortb)
+                 dataselectc1sortb,dataselectc2sortb,dataselectd1sortb,dataselectd2sortb,
+                 dataselecte1sortb,dataselecte2sortb,dataselectf1sortb,dataselectf2sortb,
+                 dataselectg1sortb,dataselectg2sortb,dataselecth1sortb,dataselecth2sortb,
+                 dataselecti1sortb,dataselecti2sortb,dataselectj1sortb,dataselectj2sortb,
+                 dataselectk1sortb,dataselectk2sortb)
 colnames(alldata)[12] <- "EN.ID"
 
 #arrange
 ydata <- alldata[,1:11]
+ydata <- transform(ydata, culm.diameter.mean = (culm.diameter1 + culm.diameter2)/2)
 ydata <- transform(ydata, log.weight = log(weight))
 ymat <- as.matrix(ydata)
 attr <- alldata[, c(12,13)]
 
 #make linear mixed model
 require(lme4)
-linename <- append(linename_AB, linename_EF)
-g.mex <- matrix(NA, nrow=length(linename), ncol=ncol(ymat))
-rownames(g.mex) <- linename
+linename_no_dup <- linename[!duplicated(linename)]
+g.mex <- matrix(NA, nrow=length(linename_no_dup), ncol=ncol(ymat))
+rownames(g.mex) <- linename_no_dup
 
 for(i in 1:ncol(ymat)) {
 	trait <- colnames(ymat)[i]
@@ -295,10 +212,4 @@ for(i in 1:ncol(ymat)) {
 }
 colnames(g.mex) <- colnames(ymat)
 
-#check and remove duplicated lines
-g.mex[duplicated(rownames(g.mex)),] #11 lines are duplicated
-g.mex <- g.mex[!duplicated(rownames(g.mex)),]
-
-write.csv(g.mex,"result/pheno_mex_2014_inbred_ABEF.csv")
-
-#If you need, please sort the rownames of this file.(it's a bit disordered)
+write.csv(g.mex,"result/pheno_mex_2015_A-K.csv")
