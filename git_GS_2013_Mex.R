@@ -1,4 +1,4 @@
-setwd("C:/Users/Tomo/Dropbox/sorghum_local/GS_2013_Mex")
+setwd("C:/Users/Tomo/Dropbox/sorghum/GS_2013_Mex")
 
 geno <- read.csv("data/inbred_SNP_list_by_stacks_geno_150120_sel1_imputed_trim_score_CMS.csv",row.names=1)
 pheno <- read.csv("data/pheno_mex2013_ver0.3_g.csv",row.names=1)

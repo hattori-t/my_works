@@ -1,4 +1,4 @@
-setwd("C:/Users/Tomo/Dropbox/sorghum_local/2015_Mex_pheno_arrange")
+setwd("C:/Users/Tomo/Dropbox/sorghum/2015_Mex_pheno_arrange")
 
 data <- read.csv("data/2015_Mexi_all_data_rev1.csv", row.names = 1)
 

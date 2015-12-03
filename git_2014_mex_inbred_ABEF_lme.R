@@ -1,4 +1,4 @@
-setwd("C:/Users/Tomo/Dropbox/sorghum_local/2014_Mex_pheno_arrange")
+setwd("C:/Users/Tomo/Dropbox/sorghum/2014_Mex_pheno_arrange")
 
 data <- read.csv("data/data_Mexico_20141109_edit_no_bis_no_outlier_no_outlier_from_koshibasan.csv", row.names = 1)
 
