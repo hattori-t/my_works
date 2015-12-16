@@ -91,7 +91,7 @@ for(i in linename){
 }
 
 #### Prediction 2016 using beta average ####
-## RR-BLUP CV
+## RR-BLUP
 dir.create("result/2016/rrBLUP")
 
 Nl <- nrow(Geno_15)
@@ -117,29 +117,15 @@ for(trait in 1:Ntrait){
 write.csv(beta_rrBLUP,"result/2016/rrBLUP/beta_rrBLUP.csv")
 write.csv(Predictions_rrBLUP,"result/2016/rrBLUP/Predictions_rrBLUP.csv")
 
-##plot
-#phenolist <- colnames(Pheno_all)
-#cor_rrBLUP <- NULL
 
-#for(trait in 1:Ntrait){
-#    print(paste(trait,phenolist[trait]))
-#    pdf(paste("result/2016/rrBLUP/2013-2015_",phenolist[trait],"_rrBLUP.pdf",sep=""))
-#    plot(Pheno_15[,trait], Predictions_rrBLUP[,trait], col=data1, pch=data1, xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait],"_2013~2015->2015_rrBLUP",sep=""))
-#    abline(0, 1, lty = "dotted")
-#    Cor <- cor(Pheno_15[,trait],Predictions_rrBLUP[,trait], use="pair")
-#    Core <- sprintf("%.2f", Cor)
-#    mse <- round(sum((Pheno_15[,trait] - Predictions_rrBLUP[,trait])^2) / length(Pheno_15[,trait]), 2)
-#    rmse <- round(sqrt(mse),2)
-#    legend("bottomright", legend = paste("r=",Core," rmse=",rmse,sep=""), bty="n")
-#    legend("topleft",legend=labels,col=unique(data1),pch=unique(data1),bty="n")
-#    cor_rrBLUP <- rbind(cor_rrBLUP, Core)
-#    dev.off()
-#}
-
-
-## GAUSS CV
+## GAUSS
 dir.create("result/2016/GAUSS")
 cor_GAUSS <- NULL
+
+Nl <- nrow(Geno_15)
+stopifnot(Nl==nrow(Geno_15))
+Ntrait <- ncol(Pheno_all)
+library(rrBLUP)
 
 Predictions_GAUSS <- matrix(0,nc=Ntrait,nr=Nl)
 rownames(Predictions_GAUSS) <- rownames(Geno_15)
@@ -159,18 +145,92 @@ for(trait in 1:Ntrait){
 write.csv(beta_GAUSS,"result/2016/GAUSS/beta_GAUSS.csv")
 write.csv(Predictions_GAUSS,"result/2016/GAUSS/Predictions_GAUSS.csv")
 
-##plot
-#for(trait in 1:Ntrait){
-#    print(paste(trait,phenolist[trait]))
-#    pdf(paste("result/2016/GAUSS/2013-2015_",phenolist[trait],"_GAUSS.pdf",sep=""))
-#    plot(Pheno_15[,trait], Predictions_GAUSS[,trait],  col=data1,pch=data1,xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait],"_2013~2015->2015_GAUSS",sep=""))
-#    abline(0, 1, lty = "dotted")
-#    Cor <- cor(Pheno_15[,trait],Predictions_GAUSS[,trait], use="pair")
-#    Core <- sprintf("%.2f", Cor)
-#    mse<-round(sum((Pheno_15[,trait] - Predictions_GAUSS[,trait])^2) / length(Pheno_15[,trait]), 2)
-#    rmse<-round(sqrt(mse),2)
-#    legend("bottomright", legend = paste("r=",Core," rmse=",rmse,sep=""), bty="n")
-#    legend("topleft",legend=labels,col=unique(data1),pch=unique(data1),bty="n")
-#    cor_GAUSS <- rbind(cor_GAUSS, Core)
-#    dev.off()
-#}
+
+## randomForest
+dir.create("result/2016/RF")
+
+Nl <- nrow(Geno_15)
+Ntrait <- ncol(Pheno_all)
+library(randomForest)
+
+Predictions_RF <- matrix(0,nc=Ntrait,nr=Nl)
+rownames(Predictions_RF) <- rownames(Geno_15)
+colnames(Predictions_RF) <- colnames(Pheno_all)
+
+
+for(trait in 1:Ntrait){
+  cat("trait",trait,"\n")
+  Result <- randomForest (y=Pheno_all[,trait], x=Z%*%Geno_all)
+  Predictions_RF[,trait] <- predict(Result, newdata=Geno_15[,,drop=F])
+}
+
+write.csv(Predictions_RF,"result/2016/RF/Predictions_RF.csv")
+
+
+##LASSO
+dir.create("result/2016/LASSO")
+
+Nl <- nrow(Geno_15)
+Ntrait <- ncol(Pheno_all)
+library(glmnet)
+
+Predictions_LASSO <- matrix(0,nc=Ntrait,nr=Nl)
+rownames(Predictions_LASSO) <- rownames(Geno_15)
+colnames(Predictions_LASSO) <- colnames(Pheno_all)
+
+Geno_15_newx <- as.matrix(Geno_15)
+Geno_all_newx <- as.matrix(Geno_all)
+
+for(trait in 1:Ntrait){
+  cat("trait",trait,"\n")
+  Result <- cv.glmnet (y=Pheno_all[,trait], x=Z%*%Geno_all_newx, alpha=1)
+  Predictions_LASSO[,trait] <- predict(Result, newx=Geno_15_newx[,,drop=F])
+}
+
+write.csv(Predictions_LASSO,"result/2016/LASSO/Predictions_LASSO.csv")
+
+
+##elasticnet
+dir.create("result/2016/elasticnet")
+
+Nl <- nrow(Geno_15)
+Ntrait <- ncol(Pheno_all)
+library(glmnet)
+
+Predictions_elasticnet <- matrix(0,nc=Ntrait,nr=Nl)
+rownames(Predictions_elasticnet) <- rownames(Geno_15)
+colnames(Predictions_elasticnet) <- colnames(Pheno_all)
+
+Geno_15_newx <- as.matrix(Geno_15)
+Geno_all_newx <- as.matrix(Geno_all)
+
+for(trait in 1:Ntrait){
+  cat("trait",trait,"\n")
+  Result <- cv.glmnet (y=Pheno_all[,trait], x=Z%*%Geno_all_newx, alpha=0.5)
+  Predictions_elasticnet[,trait] <- predict(Result, newx=Geno_15_newx[,,drop=F])
+}
+
+write.csv(Predictions_elasticnet,"result/2016/elasticnet/Predictions_elasticnet.csv")
+
+
+##ridge
+dir.create("result/2016/ridge")
+
+Nl <- nrow(Geno_15)
+Ntrait <- ncol(Pheno_all)
+library(glmnet)
+
+Predictions_ridge <- matrix(0,nc=Ntrait,nr=Nl)
+rownames(Predictions_ridge) <- rownames(Geno_15)
+colnames(Predictions_ridge) <- colnames(Pheno_all)
+
+Geno_15_newx <- as.matrix(Geno_15)
+Geno_all_newx <- as.matrix(Geno_all)
+
+for(trait in 1:Ntrait){
+  cat("trait",trait,"\n")
+  Result <- cv.glmnet (y=Pheno_all[,trait], x=Z%*%Geno_all_newx, alpha=0)
+  Predictions_ridge[,trait] <- predict(Result, newx=Geno_15_newx[,,drop=F])
+}
+
+write.csv(Predictions_ridge,"result/2016/ridge/Predictions_ridge.csv")
