@@ -1,3 +1,5 @@
+#This script is for GS(modeling 2013 Mex -> prediction 2014 Mex)
+
 setwd("C:/Users/Tomo/Dropbox/sorghum/GS_Mex_2013-2014")
 
 #data of 2013 (pheno, geno)
