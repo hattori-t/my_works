@@ -1,6 +1,6 @@
 setwd("C:/Users/Tomo/Dropbox/sorghum/GS_comparing_genotype(using2014model)")
 
-geno <- read.csv("data/meanDP3-100/GATK_HaplotypeCaller_GenotypeGVCFs_all_chr_snp_dp3gq13_MS0.8_bi_MQ20_meanDP3-100_imputed_score.csv",row.names=1)
+geno <- read.csv("data/GATK_479RAD.DP3_MS95_MQ20_AF1.bi.nr.beagle_noREF.all.maf1.density30.csv",row.names=1)
 pheno <- read.csv("data/pheno_mex_2014_inbred_ABEF.csv",row.names=1)
 colnames(geno) <- gsub("_res","",colnames(geno))
 colnames(geno)=gsub("B31.","B31/",colnames(geno))
@@ -68,10 +68,10 @@ Predictedvalues.RR <- Prediction.rrBLUP(Geno, Pheno, Partition, "RR")
 phenolist <- colnames(Pheno)
 cor_rrBLUP <- NULL
 Ntrait <- ncol(Pheno)
-dir.create("result/GATK_HaplotypeCaller_GenotypeGVCFs_all_chr_snp_dp3gq13_MS0.8_bi_MQ20_meanDP3-100_imputed_score")
+dir.create("result/GATK_479RAD.DP3_MS95_MQ20_AF1.bi.nr.beagle_noREF.all.maf1.density30")
 
 for(trait in 1:Ntrait){
-    pdf(paste("result/GATK_HaplotypeCaller_GenotypeGVCFs_all_chr_snp_dp3gq13_MS0.8_bi_MQ20_meanDP3-100_imputed_score/", phenolist[trait], "_2014_rrBLUP.pdf", sep = ""))
+    pdf(paste("result/GATK_479RAD.DP3_MS95_MQ20_AF1.bi.nr.beagle_noREF.all.maf1.density30/", phenolist[trait], "_2014_rrBLUP.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.RR[,trait], col = data1, pch = data1, xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait],"_2014_rrBLUP",sep = ""))
     abline(0, 1, lty = "dotted")
     Cor <- cor(Pheno[,trait], Predictedvalues.RR[,trait], use="pair")
