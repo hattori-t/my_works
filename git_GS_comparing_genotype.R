@@ -12,7 +12,7 @@ Pheno <- pheno_trim[line,]
 geno_trim <- geno[,line]
 Geno <- t(geno_trim)
 
-##prepare for coloring
+#prepare for coloring
 data <- rownames(Pheno)
 data1 <- rep(1,length(data))
 data1[substr(data, 1, 3) == "B2/"] <- 2
