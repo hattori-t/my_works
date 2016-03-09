@@ -24,21 +24,25 @@ selector <- !is.na(match(rownames(pheno),colnames(geno)))
 pheno <- pheno[selector,]
 
 #test.data
-trait <- pheno[,8]         #choose trait No.1 [,1~9]
+trait <- pheno[,1]
 selector <- !is.na(trait)
 test.data <- pheno[selector,]
-trait <- test.data[,9]         #choose trait No.2 [,1~9]
-selector <- !is.na(trait)
-test.data <- test.data[selector,]
+for (i in 2:9) {
+  trait <- test.data[,i]
+  selector <- !is.na(trait)
+  test.data <- test.data[selector,]
+}
 test.data <- transform(test.data, X=rownames(test.data))
 
 #prior
-prior <- list(G=list(G1=list(V=diag(2),n=4)),R=list(V=diag(2),n=4))
+prior <- list(G=list(G1=list(V=diag(9),n=11)),R=list(V=diag(9),n=11))
 
 ## MCMC ##
-model_ionome <- MCMCglmm(fixed=cbind(brix,log.leaf.culm.weight)~trait,random=~us(trait):X,  #check3/3!
+model_ionome <- MCMCglmm(fixed=cbind(lodging,culm.num,panicle.length,plant.height,culm.length,
+                                     leaf.culm.weight,juicy,brix,log.leaf.culm.weight)~trait,random=~us(trait):X,  #check3/3!
                          rcov=~us(trait):units,ginverse=list(X=Ainv), prior=prior,
-                         data=test.data, family = c("gaussian", "gaussian"))
+                         data=test.data, family = c("gaussian", "gaussian", "gaussian", "gaussian"
+                                                    , "gaussian", "gaussian", "gaussian", "gaussian", "gaussian"))
 summary(model_ionome)
 
 
