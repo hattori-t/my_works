@@ -9,20 +9,25 @@ data <- commandArgs(trailingOnly=T)[1]
 traitname <- commandArgs(trailingOnly=T)[2]
 filename_save <- paste("heritability_",data,"_",traitname,".data",sep="")
 
-## genotype
+## data
 geno <- read.csv("data/inbred_SNP_list_by_stacks_geno_150120_sel1_imputed_trim_score_CMS.csv",row.names = 1)
 colnames(geno) <- gsub("_res","",colnames(geno))
 colnames(geno)=gsub("B31.","B31/",colnames(geno))
 colnames(geno)=gsub("B2.","B2/",colnames(geno))
 
+pheno <- read.csv(paste("data/",data,".csv",sep=""), row.names=1)
+
+line <- intersect(rownames(pheno),colnames(geno))
+pheno <- pheno[line,]
+geno <- geno[,line]
+
+# Amat
 xmat <- t(as.matrix(geno))
 amat <- A.mat(xmat, shrink = T)
 Ainv <- solve(amat)
 Ainv <- as(Ainv,"sparseMatrix")
 
-
-## phenotype
-pheno <- read.csv(paste("data/",data,".csv",sep=""), row.names=1)
+# testdata
 pheno <- scale(pheno)
 trait <- pheno[,1]
 selector <- !is.na(trait)
@@ -33,6 +38,7 @@ trait <- test.data[,traitname]
 phenotype <- matrix(trait,ncol = 1)
 X <- test.data$X
 rownames(phenotype) <- X
+
 
 
 ## prior
