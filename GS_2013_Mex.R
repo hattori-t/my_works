@@ -74,7 +74,7 @@ Predictedvalues.RR <- Prediction.rrBLUP(Geno, Pheno, Partition, "RR")
 #plot
 cor_rrBLUP <- NULL
 Ntrait <- ncol(Pheno)
-dir.create("paste("result_",repeatNo,sep = "")/rrBLUP")
+dir.create(paste("result_",repeatNo,sep = "")/rrBLUP")
 
 for(trait in 1:Ntrait){
     pdf(paste("paste("result_",repeatNo,sep = "")/rrBLUP/", phenolist[trait], "_2013_rrBLUP.pdf", sep = ""))
@@ -97,7 +97,7 @@ Predictedvalues.GAUSS <- Prediction.rrBLUP(Geno, Pheno, Partition, "GAUSS")
 
 #plot
 cor_GAUSS <- NULL
-dir.create("paste("result_",repeatNo,sep = "")/GAUSS")
+dir.create(paste("result_",repeatNo,sep = "")/GAUSS")
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
@@ -148,7 +148,7 @@ Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
 
 #plot
 cor_RF <- NULL
-dir.create("paste("result_",repeatNo,sep = "")/RF")
+dir.create(paste("result_",repeatNo,sep = "")/RF")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
@@ -206,7 +206,7 @@ Predictedvalues.glmnet.ridge <- Prediction.glmnet(Geno, Pheno, Partition, 0)
 
 #plot
 cor_glmnet.ridge <- NULL
-dir.create("paste("result_",repeatNo,sep = "")/ridge")
+dir.create(paste("result_",repeatNo,sep = "")/ridge")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
@@ -231,7 +231,7 @@ Predictedvalues.glmnet.elasticnet <- Prediction.glmnet(Geno, Pheno, Partition, 0
 
 #plot
 cor_glmnet.elasticnet <- NULL
-dir.create("paste("result_",repeatNo,sep = "")/elasticnet")
+dir.create(paste("result_",repeatNo,sep = "")/elasticnet")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
@@ -257,7 +257,7 @@ Predictedvalues.glmnet.lasso <- Prediction.glmnet(Geno, Pheno, Partition, 1)
 
 #plot
 cor_glmnet.lasso <- NULL
-dir.create("paste("result_",repeatNo,sep = "")/lasso")
+dir.create(paste("result_",repeatNo,sep = "")/lasso")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
