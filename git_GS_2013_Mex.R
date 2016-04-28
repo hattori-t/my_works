@@ -1,16 +1,23 @@
-setwd("C:/Users/Tomo/Dropbox/sorghum/GS_2013_Mex")
+setwd("/Users/tomo/Dropbox/sorghum/GS_2013_Mex")
 
-geno <- read.csv("data/inbred_SNP_list_by_stacks_geno_150120_sel1_imputed_trim_score_CMS.csv",row.names=1)
-pheno <- read.csv("data/pheno_mex2013_ver0.3_g.csv",row.names=1)
+### parameters ###
+data <- commandArgs(trailingOnly=T)[1]
+repeatNo <- commandArgs(trailingOnly=T)[2]
+
+## data
+geno <- read.csv("data/inbred_SNP_list_by_stacks_geno_150120_sel1_imputed_trim_score_CMS.csv",row.names = 1)
 colnames(geno) <- gsub("_res","",colnames(geno))
 colnames(geno)=gsub("B31.","B31/",colnames(geno))
 colnames(geno)=gsub("B2.","B2/",colnames(geno))
+
+pheno <- read.csv(paste("data/",data,".csv",sep=""), row.names=1)
 
 pheno_trim <- na.omit(pheno)
 line <- intersect(rownames(pheno_trim),colnames(geno))
 Pheno <- pheno_trim[line,]
 geno_trim <- geno[,line]
 Geno <- t(geno_trim)
+phenolist <- colnames(Pheno)
 
 ##prepare for coloring
 data <- rownames(Pheno)
@@ -23,7 +30,7 @@ CreateRandomPartition<-function(N, Nfold, Nrepeat){
     #N: number of lines
     #Nfold: number of folds of CV
     #Nrepeat: number of repeats of CV
-    
+
     for(r in 1:Nrepeat){
         Partition <- sample(1:N, N, replace = F)
         Output <- paste(Nfold, "fold.N", N, ".repeat", r, ".txt", sep = "")
@@ -33,21 +40,21 @@ CreateRandomPartition<-function(N, Nfold, Nrepeat){
     }
 }
 
-CreateRandomPartition(nrow(Pheno),10,5)
+#CreateRandomPartition(nrow(Pheno),10,5) #make partition only one time!
 
-Partition <- as.matrix(read.table(paste("10fold.N", nrow(Pheno), ".repeat1.txt", sep = ""), skip = 1))
-dir.create("result")
+Partition <- as.matrix(read.table(paste("10fold.N", nrow(Pheno), ".repeat", repeatNo, ".txt", sep = ""), skip = 1))
+dir.create(paste("result_",repeatNo,sep = ""))
 
 ######################
 ## RR-BLUP CV
 
 Prediction.rrBLUP <- function(Geno, Pheno, Partition, Method){
-    
+
     Nl <- nrow(Pheno)
     stopifnot(Nl == nrow(Geno))
     Ntrait <- ncol(Pheno)
     library(rrBLUP)
-    
+
     Partition[Partition == -9] <- 0
     Nfold <- ncol(Partition)
     Predictions <- matrix(0, ncol = Ntrait, nrow = Nl)
@@ -65,13 +72,12 @@ Prediction.rrBLUP <- function(Geno, Pheno, Partition, Method){
 Predictedvalues.RR <- Prediction.rrBLUP(Geno, Pheno, Partition, "RR")
 
 #plot
-phenolist <- colnames(Pheno)
 cor_rrBLUP <- NULL
 Ntrait <- ncol(Pheno)
-dir.create("result/rrBLUP")
+dir.create("paste("result_",repeatNo,sep = "")/rrBLUP")
 
 for(trait in 1:Ntrait){
-    pdf(paste("result/rrBLUP/", phenolist[trait], "_2013_rrBLUP.pdf", sep = ""))
+    pdf(paste("paste("result_",repeatNo,sep = "")/rrBLUP/", phenolist[trait], "_2013_rrBLUP.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.RR[,trait], col = data1, pch = data1, xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait],"_2013_rrBLUP",sep = ""))
     abline(0, 1, lty = "dotted")
     Cor <- cor(Pheno[,trait], Predictedvalues.RR[,trait], use="pair")
@@ -91,11 +97,11 @@ Predictedvalues.GAUSS <- Prediction.rrBLUP(Geno, Pheno, Partition, "GAUSS")
 
 #plot
 cor_GAUSS <- NULL
-dir.create("result/GAUSS")
+dir.create("paste("result_",repeatNo,sep = "")/GAUSS")
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
-    pdf(paste("result/GAUSS/", phenolist[trait], "_2013_GAUSS.pdf", sep = ""))
+    pdf(paste("paste("result_",repeatNo,sep = "")/GAUSS/", phenolist[trait], "_2013_GAUSS.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.GAUSS[,trait], col=data1,pch=data1,xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait],"_2013_GAUSS",sep=""))
     abline(0,1, lty ="dotted")
     Cor <- cor(Pheno[,trait],Predictedvalues.GAUSS[,trait], use="pair")
@@ -112,12 +118,12 @@ for(trait in 1:Ntrait){
 ## randomForest CV
 
 Prediction.randomForest2 <- function(Geno, Pheno, Partition){
-    
+
     Nl <- nrow(Pheno)
     stopifnot(Nl == nrow(Geno))
     Ntrait <- ncol(Pheno)
     library(randomForest)
-    
+
     Partition[Partition == -9] <- 0
     Nfold <- ncol(Partition)
     Predictions <- matrix(0, ncol = Ntrait, nrow = Nl)
@@ -130,7 +136,7 @@ Prediction.randomForest2 <- function(Geno, Pheno, Partition){
             }else{
                 Result <- randomForest (y=Pheno[-Test,trait], x=Geno[-Test,])
             }
-            
+
             Predictions[Test,trait] <- predict(Result, newdata=Geno[Test,,drop=FALSE])
         }
     }
@@ -142,13 +148,13 @@ Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
 
 #plot
 cor_RF <- NULL
-dir.create("result/RF")
+dir.create("paste("result_",repeatNo,sep = "")/RF")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
-    pdf(paste("result/RF/", phenolist[trait], "_2013_randomForest.pdf", sep = ""))
+    pdf(paste("paste("result_",repeatNo,sep = "")/RF/", phenolist[trait], "_2013_randomForest.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.RF[,trait], col = data1, pch = data1, xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait], "_2013_randomForest", sep = ""))
     abline(0, 1, lty = "dotted")
     Cor <- cor(Pheno[,trait], Predictedvalues.RF[,trait], use = "pair")
@@ -165,14 +171,14 @@ for(trait in 1:Ntrait){
 ## glmnet CV
 
 Prediction.glmnet <- function(Geno, Pheno, Partition, Alpha){
-    
+
     alpha <- Alpha
     Geno <- as.matrix(Geno)
     Nl <- nrow(Pheno)
     stopifnot(Nl == nrow(Geno))
     Ntrait <- ncol(Pheno)
     library(glmnet)
-    
+
     Partition[Partition == -9] <- 0
     Nfold <- ncol(Partition)
     Predictions <- matrix(0, ncol = Ntrait, nrow = Nl)
@@ -185,7 +191,7 @@ Prediction.glmnet <- function(Geno, Pheno, Partition, Alpha){
             }else{
                 Result <- cv.glmnet (y=Pheno[-Test,trait], x=Geno[-Test,], alpha=alpha)
             }
-            
+
             Predictions[Test,trait] <- predict(Result, newx=Geno[Test,,drop=FALSE])
         }
     }
@@ -200,13 +206,13 @@ Predictedvalues.glmnet.ridge <- Prediction.glmnet(Geno, Pheno, Partition, 0)
 
 #plot
 cor_glmnet.ridge <- NULL
-dir.create("result/ridge")
+dir.create("paste("result_",repeatNo,sep = "")/ridge")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
-    pdf(paste("result/ridge/", phenolist[trait], "_2013_glmnet.ridge.pdf", sep = ""))
+    pdf(paste("paste("result_",repeatNo,sep = "")/ridge/", phenolist[trait], "_2013_glmnet.ridge.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.glmnet.ridge[,trait], col = data1, pch = data1, xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait],"_2013_glmnet.ridge",sep=""))
     abline(0, 1, lty = "dotted")
     Cor <- cor(Pheno[,trait], Predictedvalues.glmnet.ridge[,trait], use = "pair")
@@ -225,14 +231,14 @@ Predictedvalues.glmnet.elasticnet <- Prediction.glmnet(Geno, Pheno, Partition, 0
 
 #plot
 cor_glmnet.elasticnet <- NULL
-dir.create("result/elasticnet")
+dir.create("paste("result_",repeatNo,sep = "")/elasticnet")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
-    pdf(paste("result/elasticnet/", phenolist[trait], "_2013_glmnet.elasticnet.pdf", sep = ""))    
+    pdf(paste("paste("result_",repeatNo,sep = "")/elasticnet/", phenolist[trait], "_2013_glmnet.elasticnet.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.glmnet.elasticnet[,trait], col = data1, pch = data1, xlab = "Observed Value", ylab = "Predicted Value", main = 	paste(phenolist[trait],"_2013_glmnet.elasticnet",sep=""))
     abline(0, 1, lty = "dotted")
     Cor <- cor(Pheno[,trait], Predictedvalues.glmnet.elasticnet[,trait], use = "pair")
@@ -251,13 +257,13 @@ Predictedvalues.glmnet.lasso <- Prediction.glmnet(Geno, Pheno, Partition, 1)
 
 #plot
 cor_glmnet.lasso <- NULL
-dir.create("result/lasso")
+dir.create("paste("result_",repeatNo,sep = "")/lasso")
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
 
 for(trait in 1:Ntrait){
     print(paste(trait, phenolist[trait]))
-    pdf(paste("result/lasso/", phenolist[trait], "_2013_glmnet.lasso.pdf", sep = ""))
+    pdf(paste("paste("result_",repeatNo,sep = "")/lasso/", phenolist[trait], "_2013_glmnet.lasso.pdf", sep = ""))
     plot(Pheno[,trait], Predictedvalues.glmnet.lasso[,trait], xlab = "Observed Value", ylab = "Predicted Value", col=data1,pch=data1,main = paste(phenolist[trait],"_2013_glmnet.lasso",sep=""))
     abline(0, 1, lty = "dotted")
     mse <- round(sum((Pheno[,trait] - Predictedvalues.glmnet.lasso[,trait])^2) / length(Pheno[,trait]), 2)
@@ -277,14 +283,13 @@ cor.vec <- as.numeric(cor.vec)
 cor.vec <- matrix(cor.vec, ncol = 6)
 colnames(cor.vec) <- c("rrBLUP", "GAUSS", "randomForest", "glmnet.ridge", "glmnet.elasticnet", "glmnet.lasso")
 rownames(cor.vec) <- phenolist
-write.csv(cor.vec, "result/comparing_GSmethods.csv", quote = F)
+write.csv(cor.vec, paste("paste("result_",repeatNo,sep = "")/comparing_GSmethods_",repeatNo,".csv", sep = ""), quote = F)
 
 require(gplots)
-
-pdf("result/heatmap_GS2013MEX.pdf")
+pdf(paste("paste("result_",repeatNo,sep = "")/heatmap_GS2013MEX_",repeatNo,".pdf", sep = ""))
 heatmap.2(
     as.matrix(cor.vec),
-    main = "2014_Mex",
+    main = "2013_Mex",
     Rowv = TRUE,
     Colv = TRUE,
     trace = "none", scale = "none", na.rm = TRUE, col = redgreen(75), margin = c(11,11)
