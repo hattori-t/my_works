@@ -151,4 +151,4 @@ for(i in 1:ncol(data)) {
   data[rownames(ranef(model)$EN.ID),i] <- ranef(model)$EN.ID[,1] + coefficients(summary(model))[1,1] + mean(c(0, coefficients(summary(model))[2:3,1]))
 }
 
-write.csv(data, "mixed_model/Fukushima2014_control_mixedmodel.csv")
+write.csv(data, "mixed_model/Fukushima2014_mixedmodel.csv")
