@@ -29,17 +29,12 @@ Ainv <- as(Ainv,"sparseMatrix")
 
 # testdata
 pheno <- scale(pheno)
-trait <- pheno[,1]
-selector <- !is.na(trait)
-test.data <- pheno[selector,]
-test.data <- transform(test.data, X=rownames(test.data))
+test.data <- transform(pheno, X=rownames(pheno))
 
 trait <- test.data[,traitname]
 phenotype <- matrix(trait,ncol = 1)
 X <- test.data$X
 rownames(phenotype) <- X
-
-
 
 ## prior
 prior <- list(G=list(G1=list(V=1,n=0.002)),R=list(V=1,n=0.002))
