@@ -42,3 +42,12 @@ prior <- list(G=list(G1=list(V=1,n=0.002)),R=list(V=1,n=0.002))
 ## MCMC ##
 model <- MCMCglmm(phenotype~1,random=~X,ginverse=list(X=Ainv),data=test.data,prior=prior)
 save(model,file=filename_save)
+
+res <- matrix(NA,nr=1,nc=3)
+rownames(res) <- traitname
+colnames(res) <- c("h2","95%CI-","-95%CI")
+cor <- model$VCV[,1]/(model$VCV[,1] + model$VCV[,2])
+res[,1] <- mean(cor)
+res[,2] <- HPDinterval(cor)[1]
+res[,3] <- HPDinterval(cor)[2]
+write.csv(res,paste("heritability_",data,"_",traitname,".csv",sep=""))
