@@ -91,3 +91,59 @@ for(i in 1:nrow(data)){
 }
 
 write.csv(data,"average_model/Mexico2015_average.csv")
+
+
+# Fukushima 2013 ###############################
+pheno <- read.csv("alldata/Fukushima2013_alldata.csv")
+
+#data check
+for(i in 15:ncol(pheno)){
+  name <- colnames(pheno[i])
+  boxplot(pheno[,name],main=paste("Fuku2013",i-14,"/",ncol(pheno)-14,name))
+}
+#no outliers
+
+## average model
+pheno <- pheno[,-1:-4]
+pheno <- pheno[,-2:-10]
+name <- unique(pheno$EN.ID)
+data <- matrix(NA, nr=length(name), nc=ncol(pheno)-1)
+rownames(data) <- name
+colnames(data) <- colnames(pheno)[-1]
+
+for(i in 1:nrow(data)){
+  for(j in 1:ncol(data)){
+    data[i,j] <- mean(pheno[pheno$EN.ID==name[i],j+1],na.rm=T)
+  }
+}
+
+write.csv(data,"average_model/Fukushima2013_average.csv")
+
+
+# Fukushima 2014 ###############################
+pheno <- read.csv("alldata/Fukushima2014_control_alldata.csv")
+
+#data check
+for(i in 15:ncol(pheno)){
+  name <- colnames(pheno[i])
+  boxplot(pheno[,name],main=paste("Fuku2014_cont",i-14,"/",ncol(pheno)-14,name))
+}
+#remove outliers
+pheno$juice[pheno$juice > 3] <- NA
+pheno$panicle.length[pheno$panicle.length > 200] <- NA
+
+## average model
+pheno <- pheno[,-1:-4]
+pheno <- pheno[,-2:-10]
+name <- unique(pheno$EN.ID)
+data <- matrix(NA, nr=length(name), nc=ncol(pheno)-1)
+rownames(data) <- name
+colnames(data) <- colnames(pheno)[-1]
+
+for(i in 1:nrow(data)){
+  for(j in 1:ncol(data)){
+    data[i,j] <- mean(pheno[pheno$EN.ID==name[i],j+1],na.rm=T)
+  }
+}
+
+write.csv(data,"average_model/Fukushima2014_average.csv")

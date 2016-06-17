@@ -94,3 +94,61 @@ for(i in 1:ncol(data)) {
 }
 
 write.csv(data, "mixed_model/Mexico2015_mixedmodel.csv")
+
+
+# Fukushima 2013 ###############################
+pheno <- read.csv("alldata/Fukushima2013_alldata.csv")
+
+#data check
+for(i in 15:ncol(pheno)){
+  name <- colnames(pheno[i])
+  boxplot(pheno[,name],main=paste("Fuku2013",i-14,"/",ncol(pheno)-14,name))
+}
+#no outliers
+
+#mixedmodel
+pheno <- pheno[,-1]
+pheno <- pheno[,-2:-3]
+pheno <- pheno[,-3:-11]
+name <- unique(pheno$EN.ID)
+data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
+rownames(data) <- name
+colnames(data) <- colnames(pheno)[-1:-2]
+
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lmer(pheno[,i+2] ~ Block  + (1 | EN.ID), data = pheno)
+  data[rownames(ranef(model)$EN.ID),i] <- ranef(model)$EN.ID[,1] + coefficients(summary(model))[1,1] + mean(c(0, coefficients(summary(model))[2:3,1]))
+}
+
+write.csv(data, "mixed_model/Fukushima2013_mixedmodel.csv")
+
+
+# Fukushima 2014 ###############################
+pheno <- read.csv("alldata/Fukushima2014_control_alldata.csv")
+
+#data check
+for(i in 15:ncol(pheno)){
+  name <- colnames(pheno[i])
+  boxplot(pheno[,name],main=paste("Fuku2014_cont",i-14,"/",ncol(pheno)-14,name))
+}
+#remove outliers
+pheno$juice[pheno$juice > 3] <- NA
+pheno$panicle.length[pheno$panicle.length > 200] <- NA
+
+#mixedmodel
+pheno <- pheno[,-1]
+pheno <- pheno[,-2:-3]
+pheno <- pheno[,-3:-11]
+name <- unique(pheno$EN.ID)
+data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
+rownames(data) <- name
+colnames(data) <- colnames(pheno)[-1:-2]
+
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lmer(pheno[,i+2] ~ Block  + (1 | EN.ID), data = pheno)
+  data[rownames(ranef(model)$EN.ID),i] <- ranef(model)$EN.ID[,1] + coefficients(summary(model))[1,1] + mean(c(0, coefficients(summary(model))[2:3,1]))
+}
+
+write.csv(data, "mixed_model/Fukushima2014_control_mixedmodel.csv")
