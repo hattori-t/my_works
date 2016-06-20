@@ -140,3 +140,78 @@ for(i in 1:ncol(data)) {
 }
 
 write.csv(data, "anova/H2_Mexico2015.csv")
+
+
+#Fukushima 2013 ###############################
+pheno <- read.csv("alldata/Fukushima2013_alldata.csv")
+
+#data check (already)
+#There seemed to be no outlier.
+
+## ANOVA (broad sense heritability)
+pheno <- pheno[,-1]
+pheno <- pheno[,-2:-3]
+pheno <- pheno[,-3:-11]
+data <- matrix(NA, nr=2, nc=ncol(pheno)-2)
+rownames(data) <- c("H2","H2 (only Inbred)")
+colnames(data) <- colnames(pheno)[-1:-2]
+
+#alldata
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lm(pheno[,i+2] ~ Block  + EN.ID, data = pheno)
+  res <- anova(model)
+  Me <- res$"Mean Sq"[3]
+  Mg <- res$"Mean Sq"[2]
+  b <- res$Df[1] + 1
+  Vr <- Mg/Me
+  data[1,i] <- (Vr - 1)/(Vr + b - 1)
+}
+
+#only Inbred
+Inbred <- pheno[-grep("B2/",pheno$EN.ID),]
+Inbred <- Inbred[-grep("B31/",Inbred$EN.ID),]
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lm(Inbred[,i+2] ~ Block  + EN.ID, data = Inbred)
+  res <- anova(model)
+  Me <- res$"Mean Sq"[3]
+  Mg <- res$"Mean Sq"[2]
+  b <- res$Df[1] + 1
+  Vr <- Mg/Me
+  data[2,i] <- (Vr - 1)/(Vr + b - 1)
+}
+
+write.csv(data, "H2_Fukushima2013.csv")
+
+
+
+#Fukushima 2014 ###############################
+pheno <- read.csv("alldata/Fukushima2014_control_alldata.csv")
+
+#data check (already)
+#remove outliers
+pheno$juice[pheno$juice > 3] <- NA
+pheno$panicle.length[pheno$panicle.length > 200] <- NA
+
+## ANOVA (broad sense heritability)
+pheno <- pheno[,-1]
+pheno <- pheno[,-2:-3]
+pheno <- pheno[,-3:-11]
+data <- matrix(NA, nr=1, nc=ncol(pheno)-2)
+rownames(data) <- c("H2 (only Inbred)")
+colnames(data) <- colnames(pheno)[-1:-2]
+
+#alldata (inbred only)
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lm(pheno[,i+2] ~ Block  + EN.ID, data = pheno)
+  res <- anova(model)
+  Me <- res$"Mean Sq"[3]
+  Mg <- res$"Mean Sq"[2]
+  b <- res$Df[1] + 1
+  Vr <- Mg/Me
+  data[,i] <- (Vr - 1)/(Vr + b - 1)
+}
+
+write.csv(data, "H2_Fukushima2014.csv")

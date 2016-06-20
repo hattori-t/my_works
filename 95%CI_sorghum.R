@@ -1,4 +1,4 @@
-setwd("C:/Users/Tomo/Dropbox/sorghum/heritability/0425 heritability 2013~2015")
+setwd("/Users/tomo/Dropbox/")
 
 require(coda)
 

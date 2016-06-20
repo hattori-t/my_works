@@ -11,6 +11,9 @@ filename_save <- paste("heritability_",data,"_",traitname,".data",sep="")
 
 ## data
 pheno <- read.csv(paste("data/",data,".csv",sep=""), row.names=1)
+#for only inbred
+#pheno <- pheno[-grep("B2/",rownames(pheno)),]
+#pheno <- pheno[-grep("B31/",rownames(pheno)),]
 amat <- read.csv("data/amat.csv",row.names=1)
 
 line <- intersect(rownames(pheno),colnames(amat))
