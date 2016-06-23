@@ -42,36 +42,11 @@ for(i in 1:ncol(data)) {
 write.csv(data, "Mexico2013~15_mixedmodel.csv")
 
 
-#MEXICO 2013~2015 only inbred###############################
-pheno <- rbind(pheno13,pheno14,pheno15)
-pheno <- pheno[-grep("B2/",pheno$X),]
-pheno <- pheno[-grep("B31/",pheno$X),]
-name <- unique(pheno$X)
-data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
-rownames(data) <- name
-colnames(data) <- colnames(pheno)[2:14]
+## MEXICO 2013~2015 only inbred
+data_inbred <- data[-grep("B2/",rownames(data)),]
+data_inbred <- data_inbred[-grep("B31/",rownames(data_inbred)),]
+write.csv(data_inbred, "Mexico2013~15_inbred_mixedmodel.csv")
 
-for(i in 1:ncol(data)) {
-  print(i)
-  model <- lmer(pheno[,i+1] ~ Year + (1 | X), data = pheno)
-  data[rownames(ranef(model)$X),i] <- ranef(model)$X[,1] + coefficients(summary(model))[1,1] + coefficients(summary(model))[2,1]
-}
-
-write.csv(data, "Mexico2013~15_inbred_mixedmodel.csv")
-
-
-#MEXICO 2013~2015 only F1###############################
-pheno <- rbind(pheno13,pheno14,pheno15)
-pheno <- rbind(pheno[grep("B2/",pheno$X),],pheno[grep("B31/",pheno$X),])
-name <- unique(pheno$X)
-data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
-rownames(data) <- name
-colnames(data) <- colnames(pheno)[2:14]
-
-for(i in 1:ncol(data)) {
-  print(i)
-  model <- lmer(pheno[,i+1] ~ Year + (1 | X), data = pheno)
-  data[rownames(ranef(model)$X),i] <- ranef(model)$X[,1] + coefficients(summary(model))[1,1] + coefficients(summary(model))[2,1]
-}
-
-write.csv(data, "Mexico2013~15_F1_mixedmodel.csv")
+## MEXICO 2013~2015 only F1
+data_F1<- rbind(data[grep("B2/",rownames(data)),],data[grep("B31/",rownames(data)),])
+write.csv(data_F1, "Mexico2013~15_F1_mixedmodel.csv")
