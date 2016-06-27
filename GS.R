@@ -32,7 +32,7 @@ CreateRandomPartition<-function(N, Nfold, Nrepeat){
 
 #CreateRandomPartition(nrow(Pheno),10,5) #make partition only one time!
 
-Partition <- as.matrix(read.table(paste("partition/10fold.N", nrow(Pheno), ".repeat", repeatNo, ".txt", sep = ""), skip = 1))
+Partition <- as.matrix(read.table(paste("data/partition/10fold.N", nrow(Pheno), ".repeat", repeatNo, ".txt", sep = ""), skip = 1))
 dir.create(paste("res_",data,"_",repeatNo,sep = ""))
 
 ######################
