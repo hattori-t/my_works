@@ -33,10 +33,16 @@ data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
 rownames(data) <- name
 colnames(data) <- colnames(pheno)[2:14]
 
-for(i in 1:ncol(data)) {
+for(i in 1:8) {
   print(i)
   model <- lmer(pheno[,i+1] ~ Year + (1 | X), data = pheno)
-  data[rownames(ranef(model)$X),i] <- ranef(model)$X[,1] + coefficients(summary(model))[1,1] + coefficients(summary(model))[2,1]
+  data[rownames(ranef(model)$X),i] <- ranef(model)$X[,1] + coefficients(summary(model))[1,1] + mean(c(0,coefficients(summary(model))[2:3,1]))
+}
+
+for(i in 9:ncol(data)) {
+  print(i)
+  model <- lmer(pheno[,i+1] ~ Year + (1 | X), data = pheno)
+  data[rownames(ranef(model)$X),i] <- ranef(model)$X[,1] + coefficients(summary(model))[1,1] + mean(c(0,coefficients(summary(model))[2,1]))
 }
 
 write.csv(data, "Mexico2013~15_mixedmodel.csv")
