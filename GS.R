@@ -136,30 +136,30 @@ Prediction.randomForest2 <- function(Geno, Pheno, Partition){
     return(Predictions)
 }
 
-#Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
+Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
 
 #plot
-cor_RF <- matrix(NA,nr=ncol(pheno),nc=1)
-#cor_RF <- NULL
-#dir.create(paste("res_",data,"_",repeatNo,"/RF",sep = ""))
-#Ntrait <- ncol(Pheno)
-#phenolist <- colnames(Pheno)
+#cor_RF <- matrix(NA,nr=ncol(pheno),nc=1) #check if you don't wanna run RF
+cor_RF <- NULL
+dir.create(paste("res_",data,"_",repeatNo,"/RF",sep = ""))
+Ntrait <- ncol(Pheno)
+phenolist <- colnames(Pheno)
 
-#for(trait in 1:Ntrait){
-#    print(paste(trait, phenolist[trait]))
-#    pdf(paste("res_",data,"_",repeatNo,"/RF/", phenolist[trait], "_randomForest.pdf", sep = ""))
-#    plot(Pheno[,trait], Predictedvalues.RF[,trait], xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait], "_randomForest", sep = ""))
-#    abline(0, 1, lty = "dotted")
-#    Cor <- cor(Pheno[,trait], Predictedvalues.RF[,trait], use = "pair")
-#    Core <- sprintf("%.2f", Cor)
-#    mse <- round(sum((Pheno[,trait] - Predictedvalues.RF[,trait])^2) / length(Pheno[,trait]), 2)
-#    rmse <- round(sqrt(mse), 2)
-#    legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
-#    cor_RF <- rbind(cor_RF, Core)
-#    dev.off()
-#}
-#dimnames(Predictedvalues.RF) <- dimnames(Pheno)
-#write.csv(Predictedvalues.RF,paste("res_",data,"_",repeatNo,"/RF/Predictedvalues_RF.csv", sep = ""))
+for(trait in 1:Ntrait){
+    print(paste(trait, phenolist[trait]))
+    pdf(paste("res_",data,"_",repeatNo,"/RF/", phenolist[trait], "_randomForest.pdf", sep = ""))
+    plot(Pheno[,trait], Predictedvalues.RF[,trait], xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait], "_randomForest", sep = ""))
+    abline(0, 1, lty = "dotted")
+    Cor <- cor(Pheno[,trait], Predictedvalues.RF[,trait], use = "pair")
+    Core <- sprintf("%.2f", Cor)
+    mse <- round(sum((Pheno[,trait] - Predictedvalues.RF[,trait])^2) / length(Pheno[,trait]), 2)
+    rmse <- round(sqrt(mse), 2)
+    legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
+    cor_RF <- rbind(cor_RF, Core)
+    dev.off()
+}
+dimnames(Predictedvalues.RF) <- dimnames(Pheno)
+write.csv(Predictedvalues.RF,paste("res_",data,"_",repeatNo,"/RF/Predictedvalues_RF.csv", sep = ""))
 
 
 ######################
