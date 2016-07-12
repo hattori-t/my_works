@@ -6,7 +6,7 @@ snpcall <- commandArgs(trailingOnly=T)[2]
 repeatNo <- commandArgs(trailingOnly=T)[3]
 
 ## data
-geno <- read.csv(paste("data/",snpcall,".csv",row.names = 1)
+geno <- read.csv(paste("data/",snpcall,".csv",sep=""), row.names = 1)
 pheno <- read.csv(paste("data/",data,"_mixedmodel.csv",sep=""), row.names=1)
 
 pheno_trim <- na.omit(pheno)
