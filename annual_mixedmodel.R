@@ -50,3 +50,53 @@ write.csv(data_inbred, "Mexico2013~15_inbred_mixedmodel.csv")
 ## MEXICO 2013~2015 only F1
 data_F1<- rbind(data[grep("B2/",rownames(data)),],data[grep("B31/",rownames(data)),])
 write.csv(data_F1, "Mexico2013~15_F1_mixedmodel.csv")
+
+
+
+#Fukushima 2013~2015 ###############################
+#2013
+pheno13 <- read.csv("mixed_model/Fukushima2013_mixedmodel.csv")
+colnames(pheno13)[4] <- "total.weight"
+colnames(pheno13)[5] <- "log.total.weight"
+pheno13 <- pheno13[,-15:-20]
+pheno13 <- transform(pheno13,Year="Y13")
+
+#2014
+pheno14 <- read.csv("mixed_model/Fukushima2014_mixedmodel.csv")
+pheno14 <- pheno14[,-15]
+pheno14 <- transform(pheno14,Year="Y14")
+
+#2015
+pheno15 <- read.csv("mixed_model/Fukushima2015_mixedmodel.csv")
+
+fake <- matrix(NA,nc=9,nr=nrow(pheno15))
+colnames(fake) <- c("juice","brix","plant.height","panicle.length","culm.diameter.1","culm.diameter.2","culm.diameter.mean","culm.area","culm.volume")
+pheno15 <- cbind(pheno15,fake)
+pheno15 <- pheno15[,c(1,6,7,2,3,8,9,4,5,10,11,12,13,14)]
+
+pheno15 <- transform(pheno15,Year="Y15")
+
+## mixedmodel
+pheno <- rbind(pheno13,pheno14,pheno15)
+name <- unique(pheno$X)
+data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
+rownames(data) <- name
+colnames(data) <- colnames(pheno)[2:14]
+
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lmer(pheno[,i+1] ~ Year + (1 | X), data = pheno)
+  data[rownames(ranef(model)$X),i] <- ranef(model)$X[,1] + coefficients(summary(model))[1,1] + mean(c(0,coefficients(summary(model))[2:nrow(coefficients(summary(model))),1]))
+}
+
+write.csv(data, "Fukushima2013~15_mixedmodel.csv")
+
+
+## Fukushima 2013~2015 only inbred
+data_inbred <- data[-grep("B2/",rownames(data)),]
+data_inbred <- data_inbred[-grep("B31/",rownames(data_inbred)),]
+write.csv(data_inbred, "Fukushima2013~15_inbred_mixedmodel.csv")
+
+## Fukushima 2013~2015 only F1
+data_F1<- rbind(data[grep("B2/",rownames(data)),],data[grep("B31/",rownames(data)),])
+write.csv(data_F1, "Fukushima2013~15_F1_mixedmodel.csv")
