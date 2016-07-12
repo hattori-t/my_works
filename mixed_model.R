@@ -152,3 +152,38 @@ for(i in 1:ncol(data)) {
 }
 
 write.csv(data, "mixed_model/Fukushima2014_mixedmodel.csv")
+
+
+# Fukushima 2015 ###############################
+pheno <- read.csv("alldata/Fukushima2015_control_alldata.csv")
+
+pheno$plant.height <- as.numeric(as.character(pheno$plant.height))
+pheno$panicle.length <- as.numeric(as.character(pheno$panicle.length))
+
+#data check
+c <- c(17,18,21,22)
+for(i in c){
+  boxplot(pheno[,i],main=paste("Fuku2015_cont",colnames(pheno)[i]))
+}
+#no outliers
+
+pheno <- pheno[,-15:-16] #juice and brix
+pheno <- pheno[,-17:-18] #plant.height and panicle.length
+pheno <- pheno[,-19:-23] #culm.diameter and so on
+
+#mixedmodel
+pheno <- pheno[,-1]
+pheno <- pheno[,-2:-3]
+pheno <- pheno[,-3:-11]
+name <- unique(pheno$EN.ID)
+data <- matrix(NA, nr=length(name), nc=ncol(pheno)-2)
+rownames(data) <- name
+colnames(data) <- colnames(pheno)[-1:-2]
+
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lmer(pheno[,i+2] ~ Block  + (1 | EN.ID), data = pheno)
+  data[rownames(ranef(model)$EN.ID),i] <- ranef(model)$EN.ID[,1] + coefficients(summary(model))[1,1] + mean(c(0, coefficients(summary(model))[2,1]))
+}
+
+write.csv(data, "mixed_model/Fukushima2015_mixedmodel.csv")
