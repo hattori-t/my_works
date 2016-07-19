@@ -14,6 +14,7 @@ line <- intersect(rownames(pheno_trim),colnames(geno))
 Pheno <- pheno_trim[line,]
 geno_trim <- geno[,line]
 Geno <- t(geno_trim)
+Pheno <- Pheno[,!(colnames(Pheno) %in% c("culm.diameter.1","culm.diameter.2"))]
 phenolist <- colnames(Pheno)
 
 # partition
