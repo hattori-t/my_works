@@ -3,7 +3,7 @@ require("rrBLUP")
 
 ####### F1 pheno & inbred geno
 ## data
-geno <- read.csv("data/GATK001.csv",row.names = 1)
+geno <- read.csv("data/GATK.csv",row.names = 1)
 pheno <- read.csv("data/Mexico2013~15_inbred_mixedmodel.csv", row.names=1)
 pheno <- pheno[,!(colnames(pheno) %in% c("culm.diameter.1","culm.diameter.2"))]
 test <- read.csv("data/Mexico2015_mixedmodel.csv", row.names=1)
