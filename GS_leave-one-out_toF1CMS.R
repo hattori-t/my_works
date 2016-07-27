@@ -1,13 +1,20 @@
 setwd("/Users/tomo/Dropbox/sorghum")
-require("rrBLUP")
 
-####### F1 pheno & inbred geno
+### parameters ###
+data1 <- commandArgs(trailingOnly=T)[1]
+data2 <- commandArgs(trailingOnly=T)[2]
+snpcall <- commandArgs(trailingOnly=T)[3]
+repeatNo <- commandArgs(trailingOnly=T)[4]
+
 ## data
-geno <- read.csv("data/GATK.csv",row.names = 1)
-pheno <- read.csv("data/Mexico2013~15_inbred_mixedmodel.csv", row.names=1)
+geno <- read.csv(paste("data/",snpcall,".csv",sep=""), row.names = 1)
+F1geno <- read.csv(paste("data/",snpcall,"_F1.csv",sep=""), row.names = 1)
+pheno <- read.csv(paste("data/",data1,"_mixedmodel.csv",sep=""), row.names=1)
+test <- read.csv(paste("data/",data2,"_mixedmodel.csv",sep=""), row.names=1)
+
 pheno <- pheno[,!(colnames(pheno) %in% c("culm.diameter.1","culm.diameter.2"))]
-test <- read.csv("data/Mexico2015_mixedmodel.csv", row.names=1)
-test <- test[,!(colnames(test) %in% c("culm.diameter.1","culm.diameter.2","insects","chemical"))]
+test <- test[,1:13]
+test <- test[,!(colnames(test) %in% c("culm.diameter.1","culm.diameter.2"))]
 
 pheno_trim <- na.omit(pheno)
 line <- intersect(rownames(pheno_trim),colnames(geno))
@@ -15,6 +22,10 @@ Pheno <- pheno_trim[line,]
 geno_trim <- geno[,line]
 Geno <- t(geno_trim)
 phenolist <- colnames(Pheno)
+
+F1Geno <- t(F1geno)
+rownames(F1Geno) <- gsub("B2.","B2/",rownames(F1Geno))
+rownames(F1Geno) <- gsub("B31.","B31/",rownames(F1Geno))
 
 #test.data
 nameB2 <- rownames(test)[grep("B2/",rownames(test))]
@@ -42,8 +53,8 @@ for(i in 1:nrow(B2)){
   training <- Pheno[!(rownames(Pheno) %in% name),]
     
   for(k in 1:ncol(B2)){
-      print(paste(k,"/",ncol(B2),sep=""))
-      Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = Geno[name,,drop = FALSE], K.method = "RR")
+      print(paste("->",k,"/",ncol(B2),sep=""))
+      Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = "RR")
       CMSpredict_B2[i,k] <- as.vector(Result$g.pred) + Result$beta
   }
   
@@ -70,7 +81,7 @@ for(i in 1:nrow(B31)){
   
   for(k in 1:ncol(B31)){
     print(paste(k,"/",ncol(B31),sep=""))
-    Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = Geno[name,,drop = FALSE], K.method = "RR")
+    Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = "RR")
     CMSpredict_B31[i,k] <- as.vector(Result$g.pred) + Result$beta
   }
   

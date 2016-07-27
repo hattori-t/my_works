@@ -65,6 +65,7 @@ Predictedvalues.RR <- Prediction.rrBLUP(Geno, Pheno, Partition, "RR")
 
 #plot
 cor_rrBLUP <- NULL
+rmse_rrBLUP <- NULL
 Ntrait <- ncol(Pheno)
 dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/rrBLUP",sep = ""))
 
@@ -78,6 +79,7 @@ for(trait in 1:Ntrait){
     rmse <- round(sqrt(mse), 2)
     legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
     cor_rrBLUP <- rbind(cor_rrBLUP, Core)
+    rmse_rrBLUP <- rbind(rmse_rrBLUP,rmse)
     dev.off()
 }
 dimnames(Predictedvalues.RR) <- dimnames(Pheno)
@@ -90,6 +92,7 @@ Predictedvalues.GAUSS <- Prediction.rrBLUP(Geno, Pheno, Partition, "GAUSS")
 
 #plot
 cor_GAUSS <- NULL
+rmse_GAUSS <- NULL
 dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/GAUSS",sep = ""))
 
 for(trait in 1:Ntrait){
@@ -103,6 +106,7 @@ for(trait in 1:Ntrait){
     rmse <- round(sqrt(mse),2)
     legend("bottomright", legend = paste("r=",Core," rmse=", rmse, sep=""), bty = "n")
     cor_GAUSS <- rbind(cor_GAUSS, Core)
+    rmse_GAUSS <- rbind(rmse_GAUSS,rmse)
     dev.off()
 }
 dimnames(Predictedvalues.GAUSS) <- dimnames(Pheno)
@@ -143,6 +147,7 @@ Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
 #plot
 #cor_RF <- matrix(NA,nr=ncol(pheno),nc=1) #check if you don't wanna run RF
 cor_RF <- NULL
+rmse_RF <- NULL
 dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/RF",sep = ""))
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
@@ -158,6 +163,7 @@ for(trait in 1:Ntrait){
     rmse <- round(sqrt(mse), 2)
     legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
     cor_RF <- rbind(cor_RF, Core)
+    rmse_RF <- rbind(rmse_RF,rmse)
     dev.off()
 }
 dimnames(Predictedvalues.RF) <- dimnames(Pheno)
@@ -203,6 +209,7 @@ Predictedvalues.glmnet.ridge <- Prediction.glmnet(Geno, Pheno, Partition, 0)
 
 #plot
 cor_glmnet.ridge <- NULL
+rmse_glmnet.ridge <- NULL
 dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/ridge",sep = ""))
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
@@ -218,6 +225,7 @@ for(trait in 1:Ntrait){
     rmse <- round(sqrt(mse), 2)
     legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
     cor_glmnet.ridge <- rbind(cor_glmnet.ridge, Core)
+    rmse_glmnet.ridge <- rbind(rmse_glmnet.ridge,rmse)
     dev.off()
 }
 dimnames(Predictedvalues.glmnet.ridge) <- dimnames(Pheno)
@@ -230,6 +238,7 @@ Predictedvalues.glmnet.elasticnet <- Prediction.glmnet(Geno, Pheno, Partition, 0
 
 #plot
 cor_glmnet.elasticnet <- NULL
+rmse_glmnet.elasticnet <- NULL
 dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/elasticnet",sep = ""))
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
@@ -245,6 +254,7 @@ for(trait in 1:Ntrait){
     rmse <- round(sqrt(mse), 2)
     legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
     cor_glmnet.elasticnet <- rbind(cor_glmnet.elasticnet, Core)
+    rmse_glmnet.elasticnet <- rbind(rmse_glmnet.elasticnet,rmse)
     dev.off()
 }
 dimnames(Predictedvalues.glmnet.elasticnet) <- dimnames(Pheno)
@@ -257,6 +267,7 @@ Predictedvalues.glmnet.lasso <- Prediction.glmnet(Geno, Pheno, Partition, 1)
 
 #plot
 cor_glmnet.lasso <- NULL
+rmse_glmnet.lasso <- NULL
 dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/lasso",sep = ""))
 Ntrait <- ncol(Pheno)
 phenolist <- colnames(Pheno)
@@ -272,6 +283,7 @@ for(trait in 1:Ntrait){
     Core <- sprintf("%.2f", Cor)
     legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
     cor_glmnet.lasso <- rbind(cor_glmnet.lasso, Core)
+    rmse_glmnet.lasso <- rbind(rmse_glmnet.lasso,rmse)
     dev.off()
 }
 dimnames(Predictedvalues.glmnet.lasso) <- dimnames(Pheno)
@@ -285,6 +297,13 @@ cor.vec <- matrix(cor.vec, ncol = 6)
 colnames(cor.vec) <- c("rrBLUP", "GAUSS", "randomForest", "glmnet.ridge", "glmnet.elasticnet", "glmnet.lasso")
 rownames(cor.vec) <- phenolist
 write.csv(cor.vec, paste("res_",data,"_",snpcall,"_",repeatNo,"/comparing_GSmethods_",repeatNo,".csv", sep = ""), quote = F)
+
+rmse.vec <- cbind(rmse_rrBLUP, rmse_GAUSS, rmse_RF, rmse_glmnet.ridge, rmse_glmnet.elasticnet, rmse_glmnet.lasso)
+rmse.vec <- as.numeric(rmse.vec)
+rmse.vec <- matrix(rmse.vec, ncol = 6)
+colnames(rmse.vec) <- c("rrBLUP", "GAUSS", "randomForest", "glmnet.ridge", "glmnet.elasticnet", "glmnet.lasso")
+rownames(rmse.vec) <- phenolist
+write.csv(rmse.vec, paste("res_",data,"_",snpcall,"_",repeatNo,"/comparing_GSmethods_rmse_",repeatNo,".csv", sep = ""), quote = F)
 
 require(gplots)
 pdf(paste("res_",data,"_",snpcall,"_",repeatNo,"/heatmap_",repeatNo,".pdf", sep = ""))
