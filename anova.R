@@ -215,3 +215,36 @@ for(i in 1:ncol(data)) {
 }
 
 write.csv(data, "H2_Fukushima2014.csv")
+
+
+
+#Fukushima 2015 ###############################
+pheno <- read.csv("alldata/Fukushima2015_control_alldata.csv")
+
+#data check (already)
+#no outliers
+
+## ANOVA (broad sense heritability)
+pheno <- pheno[,-1]
+pheno <- pheno[,-2:-3]
+pheno <- pheno[,-3:-11]
+pheno <- pheno[,-3:-4]
+pheno <- pheno[,-5:-6]
+pheno <- pheno[,-7:-11]
+data <- matrix(NA, nr=1, nc=ncol(pheno)-2)
+rownames(data) <- c("H2 (only Inbred)")
+colnames(data) <- colnames(pheno)[-1:-2]
+
+#alldata (inbred only)
+for(i in 1:ncol(data)) {
+  print(i)
+  model <- lm(pheno[,i+2] ~ Block  + EN.ID, data = pheno)
+  res <- anova(model)
+  Me <- res$"Mean Sq"[3]
+  Mg <- res$"Mean Sq"[2]
+  b <- res$Df[1] + 1
+  Vr <- Mg/Me
+  data[,i] <- (Vr - 1)/(Vr + b - 1)
+}
+
+write.csv(data, "H2_Fukushima2015.csv")
