@@ -44,7 +44,7 @@ r[9,] <- apply(trait9,2,mean)
 r[10,] <- apply(trait10,2,mean)
 r[11,] <- apply(trait11,2,mean)
 
-write.csv(r,".csv")
+write.csv(r,"r.csv")
 
 
 # rmse
@@ -91,5 +91,5 @@ rmse[9,] <- apply(trait9,2,mean)
 rmse[10,] <- apply(trait10,2,mean)
 rmse[11,] <- apply(trait11,2,mean)
 
-write.csv(rmse,".csv")
+write.csv(rmse,"rmse.csv")
 
