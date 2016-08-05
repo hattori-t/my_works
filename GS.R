@@ -46,6 +46,7 @@ Prediction.rrBLUP <- function(Geno, Pheno, Partition, Method){
     stopifnot(Nl == nrow(Geno))
     Ntrait <- ncol(Pheno)
     library(rrBLUP)
+    library(doParallel)
 
     Partition[Partition == -9] <- 0
     Nfold <- ncol(Partition)
@@ -54,7 +55,7 @@ Prediction.rrBLUP <- function(Geno, Pheno, Partition, Method){
         for (fold in 1:Nfold){
             cat("trait",trait,"fold",fold,"\n")
             Test <- Partition[,fold]
-            Result <- kinship.BLUP(y = Pheno[-Test,trait], G.train = Geno[-Test,], G.pred = Geno[Test,,drop = FALSE], K.method = Method)
+            Result <- kinship.BLUP(y = Pheno[-Test,trait], G.train = Geno[-Test,], G.pred = Geno[Test,,drop = FALSE], K.method = Method, n.core = detectCores())
             Predictions[Test,trait] <- as.vector(Result$g.pred) + Result$beta
         }
     }
@@ -84,6 +85,10 @@ for(trait in 1:Ntrait){
 }
 dimnames(Predictedvalues.RR) <- dimnames(Pheno)
 write.csv(Predictedvalues.RR,paste("res_",data,"_",snpcall,"_",repeatNo,"/rrBLUP/Predictedvalues_rrBLUP.csv", sep = ""))
+rownames(cor_rrBLUP) <- colnames(Pheno)
+write.csv(cor_rrBLUP,paste("res_",data,"_",snpcall,"_",repeatNo,"/rrBLUP/cor_rrBLUP.csv", sep = ""))
+rownames(rmse_rrBLUP) <- colnames(Pheno)
+write.csv(rmse_rrBLUP,paste("res_",data,"_",snpcall,"_",repeatNo,"/rrBLUP/rmse_rrBLUP.csv", sep = ""))
 
 ######################
 ## GAUSS CV
@@ -111,64 +116,10 @@ for(trait in 1:Ntrait){
 }
 dimnames(Predictedvalues.GAUSS) <- dimnames(Pheno)
 write.csv(Predictedvalues.GAUSS,paste("res_",data,"_",snpcall,"_",repeatNo,"/GAUSS/Predictedvalues_GAUSS.csv", sep = ""))
-
-
-######################
-## randomForest CV
-
-Prediction.randomForest2 <- function(Geno, Pheno, Partition){
-
-    Nl <- nrow(Pheno)
-    stopifnot(Nl == nrow(Geno))
-    Ntrait <- ncol(Pheno)
-    library(randomForest)
-
-    Partition[Partition == -9] <- 0
-    Nfold <- ncol(Partition)
-    Predictions <- matrix(0, ncol = Ntrait, nrow = Nl)
-    for(trait in 1:Ntrait){
-        for (fold in 1:Nfold){
-            cat("trait", trait, "fold", fold, "\n")
-            Test <- Partition[,fold]
-            if(any(is.na(Pheno[-Test,trait]))){
-                Result <- randomForest (y=Pheno[-Test,trait][!is.na(Pheno[-Test,trait])], x=Geno[-Test,][!is.na(Pheno[-Test,trait]),])
-            }else{
-                Result <- randomForest (y=Pheno[-Test,trait], x=Geno[-Test,])
-            }
-
-            Predictions[Test,trait] <- predict(Result, newdata=Geno[Test,,drop=FALSE])
-        }
-    }
-    return(Predictions)
-}
-
-Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
-
-#plot
-#cor_RF <- matrix(NA,nr=ncol(pheno),nc=1) #check if you don't wanna run RF
-cor_RF <- NULL
-rmse_RF <- NULL
-dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/RF",sep = ""))
-Ntrait <- ncol(Pheno)
-phenolist <- colnames(Pheno)
-
-for(trait in 1:Ntrait){
-    print(paste(trait, phenolist[trait]))
-    pdf(paste("res_",data,"_",snpcall,"_",repeatNo,"/RF/", phenolist[trait], "_randomForest.pdf", sep = ""))
-    plot(Pheno[,trait], Predictedvalues.RF[,trait], xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait], "_randomForest", sep = ""))
-    abline(0, 1, lty = "dotted")
-    Cor <- cor(Pheno[,trait], Predictedvalues.RF[,trait], use = "pair")
-    Core <- sprintf("%.2f", Cor)
-    mse <- round(sum((Pheno[,trait] - Predictedvalues.RF[,trait])^2) / length(Pheno[,trait]), 2)
-    rmse <- round(sqrt(mse), 2)
-    legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
-    cor_RF <- rbind(cor_RF, Core)
-    rmse_RF <- rbind(rmse_RF,rmse)
-    dev.off()
-}
-dimnames(Predictedvalues.RF) <- dimnames(Pheno)
-write.csv(Predictedvalues.RF,paste("res_",data,"_",snpcall,"_",repeatNo,"/RF/Predictedvalues_RF.csv", sep = ""))
-
+rownames(cor_GAUSS) <- colnames(Pheno)
+write.csv(cor_GAUSS,paste("res_",data,"_",snpcall,"_",repeatNo,"/GAUSS/cor_GAUSS.csv", sep = ""))
+rownames(rmse_GAUSS) <- colnames(Pheno)
+write.csv(rmse_GAUSS,paste("res_",data,"_",snpcall,"_",repeatNo,"/GAUSS/rmse_GAUSS.csv", sep = ""))
 
 ######################
 ## glmnet CV
@@ -230,7 +181,10 @@ for(trait in 1:Ntrait){
 }
 dimnames(Predictedvalues.glmnet.ridge) <- dimnames(Pheno)
 write.csv(Predictedvalues.glmnet.ridge,paste("res_",data,"_",snpcall,"_",repeatNo,"/ridge/Predictedvalues_ridge.csv", sep = ""))
-
+rownames(cor_glmnet.ridge) <- colnames(Pheno)
+write.csv(cor_glmnet.ridge,paste("res_",data,"_",snpcall,"_",repeatNo,"/ridge/cor_glmnet.ridge.csv", sep = ""))
+rownames(rmse_glmnet.ridge) <- colnames(Pheno)
+write.csv(rmse_glmnet.ridge,paste("res_",data,"_",snpcall,"_",repeatNo,"/ridge/rmse_glmnet.ridge.csv", sep = ""))
 
 ############
 ##elasticnet
@@ -259,7 +213,10 @@ for(trait in 1:Ntrait){
 }
 dimnames(Predictedvalues.glmnet.elasticnet) <- dimnames(Pheno)
 write.csv(Predictedvalues.glmnet.elasticnet,paste("res_",data,"_",snpcall,"_",repeatNo,"/elasticnet/Predictedvalues_elasticnet.csv", sep = ""))
-
+rownames(cor_glmnet.elasticnet) <- colnames(Pheno)
+write.csv(cor_glmnet.elasticnet,paste("res_",data,"_",snpcall,"_",repeatNo,"/elasticnet/cor_glmnet.elasticnet.csv", sep = ""))
+rownames(rmse_glmnet.elasticnet) <- colnames(Pheno)
+write.csv(rmse_glmnet.elasticnet,paste("res_",data,"_",snpcall,"_",repeatNo,"/elasticnet/rmse_glmnet.elasticnet.csv", sep = ""))
 
 ########
 ##lasso
@@ -288,10 +245,74 @@ for(trait in 1:Ntrait){
 }
 dimnames(Predictedvalues.glmnet.lasso) <- dimnames(Pheno)
 write.csv(Predictedvalues.glmnet.lasso,paste("res_",data,"_",snpcall,"_",repeatNo,"/lasso/Predictedvalues_lasso.csv", sep = ""))
+rownames(cor_glmnet.lasso) <- colnames(Pheno)
+write.csv(cor_glmnet.lasso,paste("res_",data,"_",snpcall,"_",repeatNo,"/lasso/cor_glmnet.lasso.csv", sep = ""))
+rownames(rmse_glmnet.lasso) <- colnames(Pheno)
+write.csv(rmse_glmnet.lasso,paste("res_",data,"_",snpcall,"_",repeatNo,"/lasso/rmse_glmnet.lasso.csv", sep = ""))
+
+######################
+## randomForest CV
+
+Prediction.randomForest2 <- function(Geno, Pheno, Partition){
+
+    Nl <- nrow(Pheno)
+    stopifnot(Nl == nrow(Geno))
+    Ntrait <- ncol(Pheno)
+    library(randomForest)
+
+    Partition[Partition == -9] <- 0
+    Nfold <- ncol(Partition)
+    Predictions <- matrix(0, ncol = Ntrait, nrow = Nl)
+    for(trait in 1:Ntrait){
+        for (fold in 1:Nfold){
+            cat("trait", trait, "fold", fold, "\n")
+            Test <- Partition[,fold]
+            if(any(is.na(Pheno[-Test,trait]))){
+                Result <- randomForest (y=Pheno[-Test,trait][!is.na(Pheno[-Test,trait])], x=Geno[-Test,][!is.na(Pheno[-Test,trait]),])
+            }else{
+                Result <- randomForest (y=Pheno[-Test,trait], x=Geno[-Test,])
+            }
+
+            Predictions[Test,trait] <- predict(Result, newdata=Geno[Test,,drop=FALSE])
+        }
+    }
+    return(Predictions)
+}
+
+Predictedvalues.RF <- Prediction.randomForest2(Geno, Pheno, Partition)
+
+#plot
+#cor_RF <- matrix(NA,nr=ncol(pheno),nc=1) #check if you don't wanna run RF
+cor_RF <- NULL
+rmse_RF <- NULL
+dir.create(paste("res_",data,"_",snpcall,"_",repeatNo,"/RF",sep = ""))
+Ntrait <- ncol(Pheno)
+phenolist <- colnames(Pheno)
+
+for(trait in 1:Ntrait){
+    print(paste(trait, phenolist[trait]))
+    pdf(paste("res_",data,"_",snpcall,"_",repeatNo,"/RF/", phenolist[trait], "_randomForest.pdf", sep = ""))
+    plot(Pheno[,trait], Predictedvalues.RF[,trait], xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[trait], "_randomForest", sep = ""))
+    abline(0, 1, lty = "dotted")
+    Cor <- cor(Pheno[,trait], Predictedvalues.RF[,trait], use = "pair")
+    Core <- sprintf("%.2f", Cor)
+    mse <- round(sum((Pheno[,trait] - Predictedvalues.RF[,trait])^2) / length(Pheno[,trait]), 2)
+    rmse <- round(sqrt(mse), 2)
+    legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty = "n")
+    cor_RF <- rbind(cor_RF, Core)
+    rmse_RF <- rbind(rmse_RF,rmse)
+    dev.off()
+}
+dimnames(Predictedvalues.RF) <- dimnames(Pheno)
+write.csv(Predictedvalues.RF,paste("res_",data,"_",snpcall,"_",repeatNo,"/RF/Predictedvalues_RF.csv", sep = ""))
+rownames(cor_RF) <- colnames(Pheno)
+write.csv(cor_RF,paste("res_",data,"_",snpcall,"_",repeatNo,"/RF/cor_RF.csv", sep = ""))
+rownames(rmse_RF) <- colnames(Pheno)
+write.csv(rmse_RF,paste("res_",data,"_",snpcall,"_",repeatNo,"/RF/rmse_RF.csv", sep = ""))
 
 ########################
 ##compare each method
-cor.vec <- cbind(cor_rrBLUP, cor_GAUSS, cor_RF, cor_glmnet.ridge, cor_glmnet.elasticnet, cor_glmnet.lasso)
+cor.vec <- cbind(cor_rrBLUP, cor_RF, cor_RF, cor_glmnet.ridge, cor_glmnet.elasticnet, cor_glmnet.lasso)
 cor.vec <- as.numeric(cor.vec)
 cor.vec <- matrix(cor.vec, ncol = 6)
 colnames(cor.vec) <- c("rrBLUP", "GAUSS", "randomForest", "glmnet.ridge", "glmnet.elasticnet", "glmnet.lasso")
