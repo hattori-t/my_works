@@ -566,9 +566,6 @@ Prediction.randomForest <- function(Pheno_data){
 
   Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
   require("randomForest")
-  require("foreach")
-  require("doSNOW")
-  require("parallel")
 
   for(i in 1:nrow(Pheno_data)){
     print(paste(i,"/",nrow(Pheno_data),sep=""))
@@ -579,19 +576,9 @@ Prediction.randomForest <- function(Pheno_data){
     for(k in 1:ncol(Pheno_data)){
       print(paste("->",k,"/",ncol(Pheno_data),sep=""))
       if(any(is.na(training[,k]))){
-        cores <- detectCores()
-        cl <- makeCluster(cores, type="SOCK")
-        registerDoSNOW(Cl)
-        treeNum <- 500/cores
-        Result <- foreach(ntree=rep(treeNum, cores), .combine=combine, .packages="randomForest") %dopar% randomForest (y=training[,k][!is.na(training[,k])], x=Geno[!(rownames(Pheno) %in% name),][!is.na(training[,k]),], ntree=ntree)
-        stopCluster(cl)
+        Result <- randomForest (y=training[,k][!is.na(training[,k])], x=Geno[!(rownames(Pheno) %in% name),][!is.na(training[,k]),])
       }else{
-        cores <- detectCores()
-        cl <- makeCluster(cores, type="SOCK")
-        registerDoSNOW(Cl)
-        treeNum <- 500/cores
-        Result <- foreach(ntree=rep(treeNum, cores), .combine=combine, .packages="randomForest") %dopar% randomForest (y=training[,k], x=Geno[!(rownames(Pheno) %in% name),], ntree=ntree)
-        stopCluster(cl)
+        Result <- randomForest (y=training[,k], x=Geno[!(rownames(Pheno) %in% name),])
       }
       Predictions[i,k] <- predict(Result, newdata=F1Geno[F1name,,drop = FALSE])
 
@@ -602,15 +589,15 @@ Prediction.randomForest <- function(Pheno_data){
 
 }
 
-#Predictedvalues.RF <- Prediction.randomForest(Test)
+Predictedvalues.RF <- Prediction.randomForest(Test)
 
 #plot
 cor_RF <- NULL
 rmse_RF <- NULL
-#dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF",sep=""))
 
 for(i in 1:ncol(Test)){
- # pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/",traitname[i],"_RF.pdf",sep=""))
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/",traitname[i],"_RF.pdf",sep=""))
   plot(Test[,i], Predictedvalues.RF[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF",sep = ""))
   abline(0, 1, lty = "dotted")
   Cor <- cor(Test[,i], Predictedvalues.RF[,i], use="pair")
@@ -621,11 +608,69 @@ for(i in 1:ncol(Test)){
   legend("topleft",legend=labels,col=unique(coloring),pch=unique(coloring),bty="n")
   cor_RF <- rbind(cor_RF, Core)
   rmse_RF <- rbind(rmse_RF,rmse)
-#  dev.off()
+  dev.off()
 }
-dimnames(Predictedvalues.RR) <- dimnames(Test)
-#write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/Predictedvalues_RF.csv",sep=""))
+dimnames(Predictedvalues.RF) <- dimnames(Test)
+write.csv(Predictedvalues.RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/Predictedvalues_RF.csv",sep=""))
 rownames(cor_RF) <- colnames(Test)
-#write.csv(cor_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/cor_RF.csv",sep=""))
+write.csv(cor_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/cor_RF.csv",sep=""))
 rownames(rmse_RF) <- colnames(Test)
-#write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/rmse_RF.csv",sep=""))
+write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/rmse_RF.csv",sep=""))
+
+
+#B2
+Predictedvalues.RF_B2 <- Prediction.randomForest(Test)
+
+cor_RF_B2 <- NULL
+rmse_RF_B2 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2",sep=""))
+
+for(i in 1:ncol(Test)){
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/",traitname[i],"_RF_B2.pdf",sep=""))
+  plot(Test[,i], Predictedvalues.RF_B2[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B2",sep = ""))
+  abline(0, 1, lty = "dotted")
+  Cor <- cor(Test[,i], Predictedvalues.RF_B2[,i], use="pair")
+  Core <- sprintf("%.2f", Cor)
+  mse <- round(sum((Test[,i] - Predictedvalues.RF_B2[,i])^2,na.rm = T) / length(Test[,i]), 2)
+  rmse <- round(sqrt(mse), 2)
+  legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
+  legend("topleft",legend=labels,col=unique(coloring),pch=unique(coloring),bty="n")
+  cor_RF_B2 <- rbind(cor_RF_B2, Core)
+  rmse_RF_B2 <- rbind(rmse_RF_B2,rmse)
+  dev.off()
+}
+dimnames(Predictedvalues.RF_B2) <- dimnames(Test)
+write.csv(Predictedvalues.RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/Predictedvalues_RF_B2.csv",sep=""))
+rownames(cor_RF_B2) <- colnames(Test)
+write.csv(cor_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/cor_RF_B2.csv",sep=""))
+rownames(rmse_RF_B2) <- colnames(Test)
+write.csv(rmse_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/rmse_RF_B2.csv",sep=""))
+
+
+#B31
+Predictedvalues.RF_B31 <- Prediction.randomForest(Test)
+
+cor_RF_B31 <- NULL
+rmse_RF_B31 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31",sep=""))
+
+for(i in 1:ncol(Test)){
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/",traitname[i],"_RF_B31.pdf",sep=""))
+  plot(Test[,i], Predictedvalues.RF_B31[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B31",sep = ""))
+  abline(0, 1, lty = "dotted")
+  Cor <- cor(Test[,i], Predictedvalues.RF_B31[,i], use="pair")
+  Core <- sprintf("%.2f", Cor)
+  mse <- round(sum((Test[,i] - Predictedvalues.RF_B31[,i])^2,na.rm = T) / length(Test[,i]), 2)
+  rmse <- round(sqrt(mse), 2)
+  legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
+  legend("topleft",legend=labels,col=unique(coloring),pch=unique(coloring),bty="n")
+  cor_RF_B31 <- rbind(cor_RF_B31, Core)
+  rmse_RF_B31 <- rbind(rmse_RF_B31,rmse)
+  dev.off()
+}
+dimnames(Predictedvalues.RF_B31) <- dimnames(Test)
+write.csv(Predictedvalues.RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/Predictedvalues_RF_B31.csv",sep=""))
+rownames(cor_RF_B31) <- colnames(Test)
+write.csv(cor_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/cor_RF_B31.csv",sep=""))
+rownames(rmse_RF_B31) <- colnames(Test)
+write.csv(rmse_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/rmse_RF_B31.csv",sep=""))
