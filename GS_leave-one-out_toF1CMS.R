@@ -56,26 +56,26 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,sep=""))
 ####################
 ## rrBLUP  (use only at UNIX command line)
 Prediction.rrBLUP <- function(Pheno_data, Method){
-  
+
   Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
   require(rrBLUP)
   require(doParallel)
-  
+
   for(i in 1:nrow(Pheno_data)){
     print(paste(i,"/",nrow(Pheno_data),sep=""))
     F1name <- rownames(Pheno_data)[i]
     name <- gsub("B[[:digit:]]/","",F1name)
     training <- Pheno[!(rownames(Pheno) %in% name),]
-    
+
     for(k in 1:ncol(Pheno_data)){
       print(paste("->",k,"/",ncol(Pheno_data),sep=""))
       Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = Method, n.core = detectCores())
       Predictions[i,k] <- as.vector(Result$g.pred) + Result$beta
     }
-    
+
   }
   return(Predictions)
-  
+
 }
 
 Predictedvalues.RR <- Prediction.rrBLUP(Test,"RR")
@@ -259,16 +259,16 @@ write.csv(rmse_GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/rmse
 ####################
 ## glmnet
 Prediction.glmnet <- function(Pheno_data, Alpha){
-  
+
   Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
   require(glmnet)
-  
+
   for(i in 1:nrow(Pheno_data)){
     print(paste(i,"/",nrow(Pheno_data),sep=""))
     F1name <- rownames(Pheno_data)[i]
     name <- gsub("B[[:digit:]]/","",F1name)
     training <- Pheno[!(rownames(Pheno) %in% name),]
-    
+
     for(k in 1:ncol(Pheno_data)){
       print(paste("->",k,"/",ncol(Pheno_data),sep=""))
       if(any(is.na(training[,k]))){
@@ -278,11 +278,11 @@ Prediction.glmnet <- function(Pheno_data, Alpha){
       }
       Predictions[i,k] <- predict(Result, newx=F1Geno[F1name,,drop = FALSE])
     }
-    
+
   }
   dimnames(Predictions) <- dimnames(Pheno_data)
   return(Predictions)
-  
+
 }
 
 
@@ -561,33 +561,45 @@ write.csv(rmse_lasso_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/lasso/B31/
 
 
 ####################
-## randomForest 
+## randomForest
 Prediction.randomForest <- function(Pheno_data){
-  
+
   Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
   require("randomForest")
-  require("pforeach")
-  
+  require("foreach")
+  require("doSNOW")
+  require("parallel")
+
   for(i in 1:nrow(Pheno_data)){
     print(paste(i,"/",nrow(Pheno_data),sep=""))
     F1name <- rownames(Pheno_data)[i]
     name <- gsub("B[[:digit:]]/","",F1name)
     training <- Pheno[!(rownames(Pheno) %in% name),]
-    
+
     for(k in 1:ncol(Pheno_data)){
       print(paste("->",k,"/",ncol(Pheno_data),sep=""))
       if(any(is.na(training[,k]))){
-        Result <- randomForest (y=training[,k][!is.na(training[,k])], x=Geno[!(rownames(Pheno) %in% name),][!is.na(training[,k]),])
+        cores <- detectCores()
+        cl <- makeCluster(cores, type="SOCK")
+        registerDoSNOW(Cl)
+        treeNum <- 500/cores
+        Result <- foreach(ntree=rep(treeNum, cores), .combine=combine, .packages="randomForest") %dopar% randomForest (y=training[,k][!is.na(training[,k])], x=Geno[!(rownames(Pheno) %in% name),][!is.na(training[,k]),], ntree=ntree)
+        stopCluster(cl)
       }else{
-        Result <- randomForest (y=training[,k], x=Geno[!(rownames(Pheno) %in% name),])
+        cores <- detectCores()
+        cl <- makeCluster(cores, type="SOCK")
+        registerDoSNOW(Cl)
+        treeNum <- 500/cores
+        Result <- foreach(ntree=rep(treeNum, cores), .combine=combine, .packages="randomForest") %dopar% randomForest (y=training[,k], x=Geno[!(rownames(Pheno) %in% name),], ntree=ntree)
+        stopCluster(cl)
       }
       Predictions[i,k] <- predict(Result, newdata=F1Geno[F1name,,drop = FALSE])
 
     }
-    
+
   }
   return(Predictions)
-  
+
 }
 
 #Predictedvalues.RF <- Prediction.randomForest(Test)
@@ -617,4 +629,3 @@ rownames(cor_RF) <- colnames(Test)
 #write.csv(cor_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/cor_RF.csv",sep=""))
 rownames(rmse_RF) <- colnames(Test)
 #write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/rmse_RF.csv",sep=""))
-
