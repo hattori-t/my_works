@@ -619,19 +619,19 @@ write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/rmse_RF.csv",s
 
 
 #B2
-Predictedvalues.RF_B2 <- Prediction.randomForest(Test)
+Predictedvalues.RF_B2 <- Prediction.randomForest(B2)
 
 cor_RF_B2 <- NULL
 rmse_RF_B2 <- NULL
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2",sep=""))
 
-for(i in 1:ncol(Test)){
+for(i in 1:ncol(B2)){
   pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/",traitname[i],"_RF_B2.pdf",sep=""))
-  plot(Test[,i], Predictedvalues.RF_B2[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B2",sep = ""))
+  plot(B2[,i], Predictedvalues.RF_B2[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B2",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(Test[,i], Predictedvalues.RF_B2[,i], use="pair")
+  Cor <- cor(B2[,i], Predictedvalues.RF_B2[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((Test[,i] - Predictedvalues.RF_B2[,i])^2,na.rm = T) / length(Test[,i]), 2)
+  mse <- round(sum((B2[,i] - Predictedvalues.RF_B2[,i])^2,na.rm = T) / length(B2[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   legend("topleft",legend=labels,col=unique(coloring),pch=unique(coloring),bty="n")
@@ -639,28 +639,28 @@ for(i in 1:ncol(Test)){
   rmse_RF_B2 <- rbind(rmse_RF_B2,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.RF_B2) <- dimnames(Test)
+dimnames(Predictedvalues.RF_B2) <- dimnames(B2)
 write.csv(Predictedvalues.RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/Predictedvalues_RF_B2.csv",sep=""))
-rownames(cor_RF_B2) <- colnames(Test)
+rownames(cor_RF_B2) <- colnames(B2)
 write.csv(cor_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/cor_RF_B2.csv",sep=""))
-rownames(rmse_RF_B2) <- colnames(Test)
+rownames(rmse_RF_B2) <- colnames(B2)
 write.csv(rmse_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/rmse_RF_B2.csv",sep=""))
 
 
 #B31
-Predictedvalues.RF_B31 <- Prediction.randomForest(Test)
+Predictedvalues.RF_B31 <- Prediction.randomForest(B31)
 
 cor_RF_B31 <- NULL
 rmse_RF_B31 <- NULL
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31",sep=""))
 
-for(i in 1:ncol(Test)){
+for(i in 1:ncol(B31)){
   pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/",traitname[i],"_RF_B31.pdf",sep=""))
-  plot(Test[,i], Predictedvalues.RF_B31[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B31",sep = ""))
+  plot(B31[,i], Predictedvalues.RF_B31[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B31",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(Test[,i], Predictedvalues.RF_B31[,i], use="pair")
+  Cor <- cor(B31[,i], Predictedvalues.RF_B31[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((Test[,i] - Predictedvalues.RF_B31[,i])^2,na.rm = T) / length(Test[,i]), 2)
+  mse <- round(sum((B31[,i] - Predictedvalues.RF_B31[,i])^2,na.rm = T) / length(B31[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   legend("topleft",legend=labels,col=unique(coloring),pch=unique(coloring),bty="n")
@@ -668,9 +668,9 @@ for(i in 1:ncol(Test)){
   rmse_RF_B31 <- rbind(rmse_RF_B31,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.RF_B31) <- dimnames(Test)
+dimnames(Predictedvalues.RF_B31) <- dimnames(B31)
 write.csv(Predictedvalues.RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/Predictedvalues_RF_B31.csv",sep=""))
-rownames(cor_RF_B31) <- colnames(Test)
+rownames(cor_RF_B31) <- colnames(B31)
 write.csv(cor_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/cor_RF_B31.csv",sep=""))
-rownames(rmse_RF_B31) <- colnames(Test)
+rownames(rmse_RF_B31) <- colnames(B31)
 write.csv(rmse_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/rmse_RF_B31.csv",sep=""))
