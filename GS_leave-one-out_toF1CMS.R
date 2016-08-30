@@ -562,10 +562,13 @@ write.csv(rmse_lasso_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/lasso/B31/
 
 ####################
 ## randomForest
-Prediction.randomForest <- function(Pheno_data){
+Prediction.randomForest <- function(Pheno_data, Geno, Pheno){
 
   Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
   require("randomForest")
+  require("foreach")
+  require("doSNOW")
+  require("parallel")
 
   for(i in 1:nrow(Pheno_data)){
     print(paste(i,"/",nrow(Pheno_data),sep=""))
@@ -573,23 +576,26 @@ Prediction.randomForest <- function(Pheno_data){
     name <- gsub("B[[:digit:]]/","",F1name)
     training <- Pheno[!(rownames(Pheno) %in% name),]
 
+    cores <- 10
+    cl <- makeCluster(cores, type = "SOCK")
+    registerDoSNOW(cl)
+    treeNum <- 500/cores
+
     for(k in 1:ncol(Pheno_data)){
       print(paste("->",k,"/",ncol(Pheno_data),sep=""))
       if(any(is.na(training[,k]))){
-        Result <- randomForest (y=training[,k][!is.na(training[,k])], x=Geno[!(rownames(Pheno) %in% name),][!is.na(training[,k]),])
+        Result <- foreach(ntree = rep(treeNum, cores), .combine = combine, .packages = "randomForest") %dopar% randomForest (y = training[,k][!is.na(training[,k])], x = Geno[!(rownames(Pheno) %in% name),][!is.na(training[,k]),], ntree = ntree)
       }else{
-        Result <- randomForest (y=training[,k], x=Geno[!(rownames(Pheno) %in% name),])
+        Result <- foreach(ntree = rep(treeNum, cores), .combine = combine, .packages = "randomForest") %dopar% randomForest (y = training[,k], x = Geno[!(rownames(Pheno) %in% name),], ntree = ntree)
       }
-      Predictions[i,k] <- predict(Result, newdata=F1Geno[F1name,,drop = FALSE])
-
+      Predictions[i,k] <- predict(Result, newdata = F1Geno[F1name,,drop = FALSE])
     }
-
+    stopCluster(cl)
   }
   return(Predictions)
-
 }
 
-Predictedvalues.RF <- Prediction.randomForest(Test)
+Predictedvalues.RF <- Prediction.randomForest(Test, Geno, Pheno)
 
 #plot
 cor_RF <- NULL
@@ -619,7 +625,7 @@ write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/rmse_RF.csv",s
 
 
 #B2
-Predictedvalues.RF_B2 <- Prediction.randomForest(B2)
+Predictedvalues.RF_B2 <- Prediction.randomForest(B2, Geno, Pheno)
 
 cor_RF_B2 <- NULL
 rmse_RF_B2 <- NULL
@@ -648,7 +654,7 @@ write.csv(rmse_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/rmse_RF_
 
 
 #B31
-Predictedvalues.RF_B31 <- Prediction.randomForest(B31)
+Predictedvalues.RF_B31 <- Prediction.randomForest(B31, Geno, Pheno)
 
 cor_RF_B31 <- NULL
 rmse_RF_B31 <- NULL
