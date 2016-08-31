@@ -131,9 +131,9 @@ for(i in 1:ncol(B2)){
 dimnames(Predictedvalues.RR) <- dimnames(B2)
 write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/Predictedvalues_rrBLUP_B2.csv",sep=""))
 rownames(cor_rrBLUP_B2) <- colnames(Test)
-write.csv(cor_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/cor_rrBLUP_B2.csv",sep=""))
+write.csv(cor_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/cor_rrBLUP_B2.csv",sep=""))
 rownames(rmse_rrBLUP_B2) <- colnames(Test)
-write.csv(rmse_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/rmse_rrBLUP_B2.csv",sep=""))
+write.csv(rmse_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/rmse_rrBLUP_B2.csv",sep=""))
 
 
 ## rrBLUP B31
@@ -160,9 +160,9 @@ for(i in 1:ncol(B31)){
 dimnames(Predictedvalues.RR) <- dimnames(B31)
 write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/Predictedvalues_rrBLUP_B31.csv",sep=""))
 rownames(cor_rrBLUP_B31) <- colnames(Test)
-write.csv(cor_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/cor_rrBLUP_B31.csv",sep=""))
+write.csv(cor_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/cor_rrBLUP_B31.csv",sep=""))
 rownames(rmse_rrBLUP_B31) <- colnames(Test)
-write.csv(rmse_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/rmse_rrBLUP_B31.csv",sep=""))
+write.csv(rmse_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/rmse_rrBLUP_B31.csv",sep=""))
 
 
 
@@ -221,9 +221,9 @@ for(i in 1:ncol(B2)){
 dimnames(Predictedvalues.GAUSS) <- dimnames(B2)
 write.csv(Predictedvalues.GAUSS,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/Predictedvalues_GAUSS_B2.csv",sep=""))
 rownames(cor_GAUSS_B2) <- colnames(Test)
-write.csv(cor_GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/cor_GAUSS_B2.csv",sep=""))
+write.csv(cor_GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/cor_GAUSS_B2.csv",sep=""))
 rownames(rmse_GAUSS_B2) <- colnames(Test)
-write.csv(rmse_GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/rmse_GAUSS_B2.csv",sep=""))
+write.csv(rmse_GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/rmse_GAUSS_B2.csv",sep=""))
 
 
 ## GAUSS B31
@@ -250,9 +250,9 @@ for(i in 1:ncol(B31)){
 dimnames(Predictedvalues.GAUSS) <- dimnames(B31)
 write.csv(Predictedvalues.GAUSS,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/Predictedvalues_GAUSS_B31.csv",sep=""))
 rownames(cor_GAUSS_B31) <- colnames(Test)
-write.csv(cor_GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/cor_GAUSS_B31.csv",sep=""))
+write.csv(cor_GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/cor_GAUSS_B31.csv",sep=""))
 rownames(rmse_GAUSS_B31) <- colnames(Test)
-write.csv(rmse_GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/rmse_GAUSS_B31.csv",sep=""))
+write.csv(rmse_GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/rmse_GAUSS_B31.csv",sep=""))
 
 
 
