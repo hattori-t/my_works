@@ -54,12 +54,11 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,sep=""))
 
 
 ####################
-## rrBLUP  (use only at UNIX command line)
+## rrBLUP
 Prediction.rrBLUP <- function(Pheno_data, Method){
 
   Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
   require(rrBLUP)
-  require(doParallel)
 
   for(i in 1:nrow(Pheno_data)){
     print(paste(i,"/",nrow(Pheno_data),sep=""))
@@ -69,7 +68,7 @@ Prediction.rrBLUP <- function(Pheno_data, Method){
 
     for(k in 1:ncol(Pheno_data)){
       print(paste("->",k,"/",ncol(Pheno_data),sep=""))
-      Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = Method, n.core = detectCores())
+      Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = Method)
       Predictions[i,k] <- as.vector(Result$g.pred) + Result$beta
     }
 
@@ -113,6 +112,7 @@ Predictedvalues.RR <- Prediction.rrBLUP(B2,"RR")
 #plot
 cor_rrBLUP_B2 <- NULL
 rmse_rrBLUP_B2 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2",sep=""))
 
 for(i in 1:ncol(B2)){
@@ -142,6 +142,7 @@ Predictedvalues.RR <- Prediction.rrBLUP(B31,"RR")
 #plot
 cor_rrBLUP_B31 <- NULL
 rmse_rrBLUP_B31 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31",sep=""))
 
 for(i in 1:ncol(B31)){
@@ -203,6 +204,7 @@ Predictedvalues.GAUSS <- Prediction.rrBLUP(B2,"GAUSS")
 #plot
 cor_GAUSS_B2 <- NULL
 rmse_GAUSS_B2 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2",sep=""))
 
 for(i in 1:ncol(B2)){
@@ -232,6 +234,7 @@ Predictedvalues.GAUSS <- Prediction.rrBLUP(B31,"GAUSS")
 #plot
 cor_GAUSS_B31 <- NULL
 rmse_GAUSS_B31 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31",sep=""))
 
 for(i in 1:ncol(B31)){
@@ -323,6 +326,7 @@ Predictedvalues.ridge_B2 <- Prediction.glmnet(B2,1)
 #plot
 cor_ridge_B2 <- NULL
 rmse_ridge_B2 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/ridge",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/ridge/B2",sep=""))
 
 for(i in 1:ncol(B2)){
@@ -353,6 +357,7 @@ Predictedvalues.ridge_B31 <- Prediction.glmnet(B31,1)
 #plot
 cor_ridge_B31 <- NULL
 rmse_ridge_B31 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/ridge",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/ridge/B31",sep=""))
 
 for(i in 1:ncol(B31)){
@@ -415,6 +420,7 @@ Predictedvalues.elasticnet_B2 <- Prediction.glmnet(B2,0.5)
 #plot
 cor_elasticnet_B2 <- NULL
 rmse_elasticnet_B2 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/elasticnet",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/elasticnet/B2",sep=""))
 
 for(i in 1:ncol(B2)){
@@ -445,6 +451,7 @@ Predictedvalues.elasticnet_B31 <- Prediction.glmnet(B31,0.5)
 #plot
 cor_elasticnet_B31 <- NULL
 rmse_elasticnet_B31 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/elasticnet",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/elasticnet/B31",sep=""))
 
 for(i in 1:ncol(B31)){
@@ -506,6 +513,7 @@ Predictedvalues.lasso_B2 <- Prediction.glmnet(B2,0)
 #plot
 cor_lasso_B2 <- NULL
 rmse_lasso_B2 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/lasso",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/lasso/B2",sep=""))
 
 for(i in 1:ncol(B2)){
@@ -536,6 +544,7 @@ Predictedvalues.lasso_B31 <- Prediction.glmnet(B31,0)
 #plot
 cor_lasso_B31 <- NULL
 rmse_lasso_B31 <- NULL
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/lasso",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/lasso/B31",sep=""))
 
 for(i in 1:ncol(B31)){
@@ -600,10 +609,10 @@ Predictedvalues.RF <- Prediction.randomForest(Test, Geno, Pheno)
 #plot
 cor_RF <- NULL
 rmse_RF <- NULL
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF",sep=""))
 
 for(i in 1:ncol(Test)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/",traitname[i],"_RF.pdf",sep=""))
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/",traitname[i],"_RF.pdf",sep=""))
   plot(Test[,i], Predictedvalues.RF[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF",sep = ""))
   abline(0, 1, lty = "dotted")
   Cor <- cor(Test[,i], Predictedvalues.RF[,i], use="pair")
@@ -617,11 +626,11 @@ for(i in 1:ncol(Test)){
   dev.off()
 }
 dimnames(Predictedvalues.RF) <- dimnames(Test)
-write.csv(Predictedvalues.RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/Predictedvalues_RF.csv",sep=""))
+write.csv(Predictedvalues.RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/Predictedvalues_RF.csv",sep=""))
 rownames(cor_RF) <- colnames(Test)
-write.csv(cor_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/cor_RF.csv",sep=""))
+write.csv(cor_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/cor_RF.csv",sep=""))
 rownames(rmse_RF) <- colnames(Test)
-write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/rmse_RF.csv",sep=""))
+write.csv(rmse_RF,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/rmse_RF.csv",sep=""))
 
 
 #B2
@@ -629,10 +638,11 @@ Predictedvalues.RF_B2 <- Prediction.randomForest(B2, Geno, Pheno)
 
 cor_RF_B2 <- NULL
 rmse_RF_B2 <- NULL
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B2",sep=""))
 
 for(i in 1:ncol(B2)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/",traitname[i],"_RF_B2.pdf",sep=""))
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B2/",traitname[i],"_RF_B2.pdf",sep=""))
   plot(B2[,i], Predictedvalues.RF_B2[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B2",sep = ""))
   abline(0, 1, lty = "dotted")
   Cor <- cor(B2[,i], Predictedvalues.RF_B2[,i], use="pair")
@@ -646,11 +656,11 @@ for(i in 1:ncol(B2)){
   dev.off()
 }
 dimnames(Predictedvalues.RF_B2) <- dimnames(B2)
-write.csv(Predictedvalues.RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/Predictedvalues_RF_B2.csv",sep=""))
+write.csv(Predictedvalues.RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B2/Predictedvalues_RF_B2.csv",sep=""))
 rownames(cor_RF_B2) <- colnames(B2)
-write.csv(cor_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/cor_RF_B2.csv",sep=""))
+write.csv(cor_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B2/cor_RF_B2.csv",sep=""))
 rownames(rmse_RF_B2) <- colnames(B2)
-write.csv(rmse_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B2/rmse_RF_B2.csv",sep=""))
+write.csv(rmse_RF_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B2/rmse_RF_B2.csv",sep=""))
 
 
 #B31
@@ -658,10 +668,11 @@ Predictedvalues.RF_B31 <- Prediction.randomForest(B31, Geno, Pheno)
 
 cor_RF_B31 <- NULL
 rmse_RF_B31 <- NULL
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B31",sep=""))
 
 for(i in 1:ncol(B31)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/",traitname[i],"_RF_B31.pdf",sep=""))
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/",traitname[i],"/RF_B31.pdf",sep=""))
   plot(B31[,i], Predictedvalues.RF_B31[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B31",sep = ""))
   abline(0, 1, lty = "dotted")
   Cor <- cor(B31[,i], Predictedvalues.RF_B31[,i], use="pair")
@@ -675,8 +686,8 @@ for(i in 1:ncol(B31)){
   dev.off()
 }
 dimnames(Predictedvalues.RF_B31) <- dimnames(B31)
-write.csv(Predictedvalues.RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/Predictedvalues_RF_B31.csv",sep=""))
+write.csv(Predictedvalues.RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B31/Predictedvalues_RF_B31.csv",sep=""))
 rownames(cor_RF_B31) <- colnames(B31)
-write.csv(cor_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/cor_RF_B31.csv",sep=""))
+write.csv(cor_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B31/cor_RF_B31.csv",sep=""))
 rownames(rmse_RF_B31) <- colnames(B31)
-write.csv(rmse_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/rmse_RF_B31.csv",sep=""))
+write.csv(rmse_RF_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B31/rmse_RF_B31.csv",sep=""))

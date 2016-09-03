@@ -46,7 +46,6 @@ Prediction.rrBLUP <- function(Geno, Pheno, Partition, Method){
     stopifnot(Nl == nrow(Geno))
     Ntrait <- ncol(Pheno)
     library(rrBLUP)
-    library(doParallel)
 
     Partition[Partition == -9] <- 0
     Nfold <- ncol(Partition)
@@ -55,7 +54,7 @@ Prediction.rrBLUP <- function(Geno, Pheno, Partition, Method){
         for (fold in 1:Nfold){
             cat("trait",trait,"fold",fold,"\n")
             Test <- Partition[,fold]
-            Result <- kinship.BLUP(y = Pheno[-Test,trait], G.train = Geno[-Test,], G.pred = Geno[Test,,drop = FALSE], K.method = Method, n.core = detectCores())
+            Result <- kinship.BLUP(y = Pheno[-Test,trait], G.train = Geno[-Test,], G.pred = Geno[Test,,drop = FALSE], K.method = Method)
             Predictions[Test,trait] <- as.vector(Result$g.pred) + Result$beta
         }
     }
