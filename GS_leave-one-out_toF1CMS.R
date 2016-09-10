@@ -107,7 +107,7 @@ write.csv(rmse_rrBLUP,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/rmse_r
 
 
 ## rrBLUP B2
-Predictedvalues.RR <- Prediction.rrBLUP(B2,"RR")
+Predictedvalues.RR_B2 <- Prediction.rrBLUP(B2,"RR")
 
 #plot
 cor_rrBLUP_B2 <- NULL
@@ -117,19 +117,19 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2",sep=""))
 
 for(i in 1:ncol(B2)){
   pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/",traitname[i],"_rrBLUP_B2.pdf",sep=""))
-  plot(B2[,i], Predictedvalues.RR[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP_B2",sep = ""))
+  plot(B2[,i], Predictedvalues.RR_B2[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP_B2",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(B2[,i], Predictedvalues.RR[,i], use="pair")
+  Cor <- cor(B2[,i], Predictedvalues.RR_B2[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((B2[,i] - Predictedvalues.RR[,i])^2,na.rm = T) / length(B2[,i]), 2)
+  mse <- round(sum((B2[,i] - Predictedvalues.RR_B2[,i])^2,na.rm = T) / length(B2[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   cor_rrBLUP_B2 <- rbind(cor_rrBLUP_B2, Core)
   rmse_rrBLUP_B2 <- rbind(rmse_rrBLUP_B2,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.RR) <- dimnames(B2)
-write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/Predictedvalues_rrBLUP_B2.csv",sep=""))
+dimnames(Predictedvalues.RR_B2) <- dimnames(B2)
+write.csv(Predictedvalues.RR_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/Predictedvalues_rrBLUP_B2.csv",sep=""))
 rownames(cor_rrBLUP_B2) <- colnames(Test)
 write.csv(cor_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/cor_rrBLUP_B2.csv",sep=""))
 rownames(rmse_rrBLUP_B2) <- colnames(Test)
@@ -137,7 +137,7 @@ write.csv(rmse_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/
 
 
 ## rrBLUP B31
-Predictedvalues.RR <- Prediction.rrBLUP(B31,"RR")
+Predictedvalues.RR_B31 <- Prediction.rrBLUP(B31,"RR")
 
 #plot
 cor_rrBLUP_B31 <- NULL
@@ -147,19 +147,19 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31",sep=""))
 
 for(i in 1:ncol(B31)){
   pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/",traitname[i],"_rrBLUP_B31.pdf",sep=""))
-  plot(B31[,i], Predictedvalues.RR[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP_B31",sep = ""))
+  plot(B31[,i], Predictedvalues.RR_B31[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP_B31",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(B31[,i], Predictedvalues.RR[,i], use="pair")
+  Cor <- cor(B31[,i], Predictedvalues.RR_B31[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((B31[,i] - Predictedvalues.RR[,i])^2,na.rm = T) / length(B31[,i]), 2)
+  mse <- round(sum((B31[,i] - Predictedvalues.RR_B31[,i])^2,na.rm = T) / length(B31[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   cor_rrBLUP_B31 <- rbind(cor_rrBLUP_B31, Core)
   rmse_rrBLUP_B31 <- rbind(rmse_rrBLUP_B31,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.RR) <- dimnames(B31)
-write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/Predictedvalues_rrBLUP_B31.csv",sep=""))
+dimnames(Predictedvalues.RR_B31) <- dimnames(B31)
+write.csv(Predictedvalues.RR_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/Predictedvalues_rrBLUP_B31.csv",sep=""))
 rownames(cor_rrBLUP_B31) <- colnames(Test)
 write.csv(cor_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/cor_rrBLUP_B31.csv",sep=""))
 rownames(rmse_rrBLUP_B31) <- colnames(Test)
@@ -199,7 +199,7 @@ write.csv(rmse_GAUSS,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/rmse_GAU
 
 
 ## GAUSS B2
-Predictedvalues.GAUSS <- Prediction.rrBLUP(B2,"GAUSS")
+Predictedvalues.GAUSS_B2 <- Prediction.rrBLUP(B2,"GAUSS")
 
 #plot
 cor_GAUSS_B2 <- NULL
@@ -209,19 +209,19 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2",sep=""))
 
 for(i in 1:ncol(B2)){
   pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/",traitname[i],"_GAUSS_B2.pdf",sep=""))
-  plot(B2[,i], Predictedvalues.GAUSS[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_GAUSS_B2",sep = ""))
+  plot(B2[,i], Predictedvalues.GAUSS_B2[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_GAUSS_B2",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(B2[,i], Predictedvalues.GAUSS[,i], use="pair")
+  Cor <- cor(B2[,i], Predictedvalues.GAUSS_B2[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((B2[,i] - Predictedvalues.GAUSS[,i])^2,na.rm = T) / length(B2[,i]), 2)
+  mse <- round(sum((B2[,i] - Predictedvalues.GAUSS_B2[,i])^2,na.rm = T) / length(B2[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   cor_GAUSS_B2 <- rbind(cor_GAUSS_B2, Core)
   rmse_GAUSS_B2 <- rbind(rmse_GAUSS_B2,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.GAUSS) <- dimnames(B2)
-write.csv(Predictedvalues.GAUSS,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/Predictedvalues_GAUSS_B2.csv",sep=""))
+dimnames(Predictedvalues.GAUSS_B2) <- dimnames(B2)
+write.csv(Predictedvalues.GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/Predictedvalues_GAUSS_B2.csv",sep=""))
 rownames(cor_GAUSS_B2) <- colnames(Test)
 write.csv(cor_GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/cor_GAUSS_B2.csv",sep=""))
 rownames(rmse_GAUSS_B2) <- colnames(Test)
@@ -229,7 +229,7 @@ write.csv(rmse_GAUSS_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B2/rm
 
 
 ## GAUSS B31
-Predictedvalues.GAUSS <- Prediction.rrBLUP(B31,"GAUSS")
+Predictedvalues.GAUSS_B31 <- Prediction.rrBLUP(B31,"GAUSS")
 
 #plot
 cor_GAUSS_B31 <- NULL
@@ -239,19 +239,19 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31",sep=""))
 
 for(i in 1:ncol(B31)){
   pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/",traitname[i],"_GAUSS_B31.pdf",sep=""))
-  plot(B31[,i], Predictedvalues.GAUSS[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_GAUSS_B31",sep = ""))
+  plot(B31[,i], Predictedvalues.GAUSS_B31[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_GAUSS_B31",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(B31[,i], Predictedvalues.GAUSS[,i], use="pair")
+  Cor <- cor(B31[,i], Predictedvalues.GAUSS_B31[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((B31[,i] - Predictedvalues.GAUSS[,i])^2,na.rm = T) / length(B31[,i]), 2)
+  mse <- round(sum((B31[,i] - Predictedvalues.GAUSS_B31[,i])^2,na.rm = T) / length(B31[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   cor_GAUSS_B31 <- rbind(cor_GAUSS_B31, Core)
   rmse_GAUSS_B31 <- rbind(rmse_GAUSS_B31,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.GAUSS) <- dimnames(B31)
-write.csv(Predictedvalues.GAUSS,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/Predictedvalues_GAUSS_B31.csv",sep=""))
+dimnames(Predictedvalues.GAUSS_B31) <- dimnames(B31)
+write.csv(Predictedvalues.GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/Predictedvalues_GAUSS_B31.csv",sep=""))
 rownames(cor_GAUSS_B31) <- colnames(Test)
 write.csv(cor_GAUSS_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/GAUSS/B31/cor_GAUSS_B31.csv",sep=""))
 rownames(rmse_GAUSS_B31) <- colnames(Test)
