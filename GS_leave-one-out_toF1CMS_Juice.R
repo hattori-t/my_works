@@ -1,8 +1,8 @@
 setwd("/Users/tomo/Dropbox/sorghum")
 
 ### parameters ###
-data1 <- "Mexico2013~15_inbred"
-data2 <- "Mexico2013"
+data1 <- "Fukushima2013~15_inbred"
+data2 <- "Mexico2015"
 snpcall <- "GATK"
 
 ## data
@@ -49,26 +49,46 @@ coloring <- rep(1,length(data))
 coloring[substr(data, 1, 4) == "B31/"] <- 2
 labels <- c("UTSb4002","UTSb4031")
 
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice",sep=""))
 
 
+## Juice selection
+Pheno$juice <- round(Pheno$juice,0)
+Test$juice <- round(Test$juice,0)
+B2$juice <- round(B2$juice,0)
+B31$juice <- round(B31$juice,0)
+
+Test <- Test[!is.na(Test$juice),]
+B2 <- B2[!is.na(B2$juice),]
+B31 <- B31[!is.na(B31$juice),]
+
+Pheno_1 <- Pheno[Pheno$juice<=1,]
+Pheno_2 <- Pheno[Pheno$juice>1,]
+Test_1 <- Test[Test$juice<=1,]
+Test_2 <- Test[Test$juice>1,]
+
+B2_1 <- B2[B2$juice<=1,]
+B2_2 <- B2[B2$juice>1,]
+B31_1 <- B31[B31$juice<=1,]
+B31_2 <- B31[B31$juice>1,]
 
 ####################
 ## rrBLUP
-Prediction.rrBLUP <- function(Pheno_data, Method){
+Prediction.rrBLUP <- function(Pheno_train, Pheno_test, Method){
 
-  Predictions <- matrix(NA, nr=nrow(Pheno_data), nc=ncol(Pheno_data), dimnames=dimnames(Pheno_data))
+  Predictions <- matrix(NA, nr=nrow(Pheno_test), nc=ncol(Pheno_test), dimnames=dimnames(Pheno_test))
   require(rrBLUP)
 
-  for(i in 1:nrow(Pheno_data)){
-    print(paste(i,"/",nrow(Pheno_data),sep=""))
-    F1name <- rownames(Pheno_data)[i]
+  for(i in 1:nrow(Pheno_test)){
+    print(paste(i,"/",nrow(Pheno_test),sep=""))
+    F1name <- rownames(Pheno_test)[i]
     name <- gsub("B[[:digit:]]/","",F1name)
-    training <- Pheno[!(rownames(Pheno) %in% name),]
+    training <- Pheno_train[!(rownames(Pheno_train) %in% name),]
+    Geno_train <- Geno[rownames(Pheno_train),]
 
-    for(k in 1:ncol(Pheno_data)){
-      print(paste("->",k,"/",ncol(Pheno_data),sep=""))
-      Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = Method)
+    for(k in 1:ncol(Pheno_test)){
+      print(paste("->",k,"/",ncol(Pheno_test),sep=""))
+      Result <- kinship.BLUP(y = training[,k], G.train = Geno_train[!(rownames(Pheno_train) %in% name),], G.pred = F1Geno[F1name,,drop = FALSE], K.method = Method)
       Predictions[i,k] <- as.vector(Result$g.pred) + Result$beta
     }
 
@@ -77,20 +97,27 @@ Prediction.rrBLUP <- function(Pheno_data, Method){
 
 }
 
-Predictedvalues.RR <- Prediction.rrBLUP(Test,"RR")
+### parameter!!
+Testing <- B2_2
+linename <- "B2_2"  
+Training <- Pheno_2
+
+#RR
+Predictedvalues.RR <- Prediction.rrBLUP(Training, Testing, "RR")
 
 #plot
 cor_rrBLUP <- NULL
 rmse_rrBLUP <- NULL
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice/rrBLUP",sep=""))
+dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice/rrBLUP/",linename,sep=""))
 
-for(i in 1:ncol(Test)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/",traitname[i],"_rrBLUP.pdf",sep=""))
-  plot(Test[,i], Predictedvalues.RR[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP",sep = ""))
+for(i in 1:ncol(Testing)){
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice/rrBLUP/",linename,"/",traitname[i],"_rrBLUP.pdf",sep=""))
+  plot(Testing[,i], Predictedvalues.RR[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP",sep = ""))
   abline(0, 1, lty = "dotted")
-  Cor <- cor(Test[,i], Predictedvalues.RR[,i], use="pair")
+  Cor <- cor(Testing[,i], Predictedvalues.RR[,i], use="pair")
   Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((Test[,i] - Predictedvalues.RR[,i])^2,na.rm = T) / length(Test[,i]), 2)
+  mse <- round(sum((Testing[,i] - Predictedvalues.RR[,i])^2,na.rm = T) / length(Testing[,i]), 2)
   rmse <- round(sqrt(mse), 2)
   legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
   legend("topleft",legend=labels,col=unique(coloring),pch=unique(coloring),bty="n")
@@ -98,72 +125,12 @@ for(i in 1:ncol(Test)){
   rmse_rrBLUP <- rbind(rmse_rrBLUP,rmse)
   dev.off()
 }
-dimnames(Predictedvalues.RR) <- dimnames(Test)
-write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/Predictedvalues_rrBLUP.csv",sep=""))
-rownames(cor_rrBLUP) <- colnames(Test)
-write.csv(cor_rrBLUP,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/cor_rrBLUP.csv",sep=""))
-rownames(rmse_rrBLUP) <- colnames(Test)
-write.csv(rmse_rrBLUP,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/rmse_rrBLUP.csv",sep=""))
-
-
-## rrBLUP B2
-Predictedvalues.RR <- Prediction.rrBLUP(B2,"RR")
-
-#plot
-cor_rrBLUP_B2 <- NULL
-rmse_rrBLUP_B2 <- NULL
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP",sep=""))
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2",sep=""))
-
-for(i in 1:ncol(B2)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/",traitname[i],"_rrBLUP_B2.pdf",sep=""))
-  plot(B2[,i], Predictedvalues.RR[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP_B2",sep = ""))
-  abline(0, 1, lty = "dotted")
-  Cor <- cor(B2[,i], Predictedvalues.RR[,i], use="pair")
-  Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((B2[,i] - Predictedvalues.RR[,i])^2,na.rm = T) / length(B2[,i]), 2)
-  rmse <- round(sqrt(mse), 2)
-  legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
-  cor_rrBLUP_B2 <- rbind(cor_rrBLUP_B2, Core)
-  rmse_rrBLUP_B2 <- rbind(rmse_rrBLUP_B2,rmse)
-  dev.off()
-}
-dimnames(Predictedvalues.RR) <- dimnames(B2)
-write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/Predictedvalues_rrBLUP_B2.csv",sep=""))
-rownames(cor_rrBLUP_B2) <- colnames(Test)
-write.csv(cor_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/cor_rrBLUP_B2.csv",sep=""))
-rownames(rmse_rrBLUP_B2) <- colnames(Test)
-write.csv(rmse_rrBLUP_B2,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B2/rmse_rrBLUP_B2.csv",sep=""))
-
-
-## rrBLUP B31
-Predictedvalues.RR <- Prediction.rrBLUP(B31,"RR")
-
-#plot
-cor_rrBLUP_B31 <- NULL
-rmse_rrBLUP_B31 <- NULL
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP",sep=""))
-dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31",sep=""))
-
-for(i in 1:ncol(B31)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/",traitname[i],"_rrBLUP_B31.pdf",sep=""))
-  plot(B31[,i], Predictedvalues.RR[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_rrBLUP_B31",sep = ""))
-  abline(0, 1, lty = "dotted")
-  Cor <- cor(B31[,i], Predictedvalues.RR[,i], use="pair")
-  Core <- sprintf("%.2f", Cor)
-  mse <- round(sum((B31[,i] - Predictedvalues.RR[,i])^2,na.rm = T) / length(B31[,i]), 2)
-  rmse <- round(sqrt(mse), 2)
-  legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
-  cor_rrBLUP_B31 <- rbind(cor_rrBLUP_B31, Core)
-  rmse_rrBLUP_B31 <- rbind(rmse_rrBLUP_B31,rmse)
-  dev.off()
-}
-dimnames(Predictedvalues.RR) <- dimnames(B31)
-write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/Predictedvalues_rrBLUP_B31.csv",sep=""))
-rownames(cor_rrBLUP_B31) <- colnames(Test)
-write.csv(cor_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/cor_rrBLUP_B31.csv",sep=""))
-rownames(rmse_rrBLUP_B31) <- colnames(Test)
-write.csv(rmse_rrBLUP_B31,paste("GS_F1_",data1,"_",data2,"_",snpcall,"/rrBLUP/B31/rmse_rrBLUP_B31.csv",sep=""))
+dimnames(Predictedvalues.RR) <- dimnames(Testing)
+write.csv(Predictedvalues.RR,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice/rrBLUP/",linename,"/","Predictedvalues_rrBLUP.csv",sep=""))
+rownames(cor_rrBLUP) <- colnames(Testing)
+write.csv(cor_rrBLUP,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice/rrBLUP/",linename,"/","cor_rrBLUP.csv",sep=""))
+rownames(rmse_rrBLUP) <- colnames(Testing)
+write.csv(rmse_rrBLUP,paste("GS_F1_",data1,"_",data2,"_",snpcall,"_Juice/rrBLUP/",linename,"/","rmse_rrBLUP.csv",sep=""))
 
 
 
