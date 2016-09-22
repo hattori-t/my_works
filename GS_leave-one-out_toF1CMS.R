@@ -672,7 +672,7 @@ dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF",sep=""))
 dir.create(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B31",sep=""))
 
 for(i in 1:ncol(B31)){
-  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"_RF/B31/",traitname[i],"/RF_B31.pdf",sep=""))
+  pdf(paste("GS_F1_",data1,"_",data2,"_",snpcall,"/RF/B31/",traitname[i],"_RF_B31.pdf",sep=""))
   plot(B31[,i], Predictedvalues.RF_B31[,i], col=coloring, pch=coloring, xlab = "Observed Value", ylab = "Predicted Value", main = paste(traitname[i],"_RF_B31",sep = ""))
   abline(0, 1, lty = "dotted")
   Cor <- cor(B31[,i], Predictedvalues.RF_B31[,i], use="pair")
