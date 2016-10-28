@@ -20,20 +20,20 @@ phenolist <- colnames(Pheno)
 
 ## prepare for coloring
 name <- colnames(Geno)
-data <- rep(1,length(name))
-data[substr(name, 1, 5) == "Chr02"] <- 2
-data[substr(name, 1, 5) == "Chr03"] <- 3
-data[substr(name, 1, 5) == "Chr04"] <- 4
-data[substr(name, 1, 5) == "Chr05"] <- 5
-data[substr(name, 1, 5) == "Chr06"] <- 6
-data[substr(name, 1, 5) == "Chr07"] <- 7
-data[substr(name, 1, 5) == "Chr08"] <- 8
-data[substr(name, 1, 5) == "Chr09"] <- 9
-data[substr(name, 1, 5) == "Chr10"] <- 10
+chrcol <- rep(1,length(name))
+chrcol[substr(name, 1, 5) == "Chr02"] <- 2
+chrcol[substr(name, 1, 5) == "Chr03"] <- 3
+chrcol[substr(name, 1, 5) == "Chr04"] <- 4
+chrcol[substr(name, 1, 5) == "Chr05"] <- 5
+chrcol[substr(name, 1, 5) == "Chr06"] <- 6
+chrcol[substr(name, 1, 5) == "Chr07"] <- 7
+chrcol[substr(name, 1, 5) == "Chr08"] <- 8
+chrcol[substr(name, 1, 5) == "Chr09"] <- 9
+chrcol[substr(name, 1, 5) == "Chr10"] <- 10
 
 ## marker effect estimation
 library(rrBLUP)
 res <- mixed.solve(Pheno$juice, Z=Geno)
-plot(res$u, col=data, cex=0.5)
+plot(res$u, col=chrcol, cex=0.5)
 
 
