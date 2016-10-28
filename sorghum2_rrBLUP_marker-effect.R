@@ -33,7 +33,29 @@ chrcol[substr(name, 1, 5) == "Chr10"] <- 10
 
 ## marker effect estimation
 library(rrBLUP)
+
 res <- mixed.solve(Pheno$juice, Z=Geno)
-plot(res$u, col=chrcol, cex=0.5)
+plot(res$u, col=chrcol, cex=0.5, main="juice")
+res$u <- sort(res$u, decreasing = T)
+length(res$u)%/%10 -> top10
+top10_juice <- res$u[1:top10]
+
+res <- mixed.solve(Pheno$brix, Z=Geno)
+plot(res$u, col=chrcol, cex=0.5, main="brix")
+res$u <- sort(res$u, decreasing = T)
+length(res$u)%/%10 -> top10
+top10_brix <- res$u[1:top10]
+
+res <- mixed.solve(Pheno$total.weight, Z=Geno)
+plot(res$u, col=chrcol, cex=0.5, main="total.weight")
+res$u <- sort(res$u, decreasing = T)
+length(res$u)%/%10 -> top10
+top10_total.weight <- res$u[1:top10]
+
+res <- mixed.solve(Pheno$plant.height, Z=Geno)
+plot(res$u, col=chrcol, cex=0.5, main="plant.height")
+res$u <- sort(res$u, decreasing = T)
+length(res$u)%/%10 -> top10
+top10_plant.height <- res$u[1:top10]
 
 
