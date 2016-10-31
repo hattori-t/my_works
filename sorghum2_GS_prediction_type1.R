@@ -1,13 +1,14 @@
 setwd("/Users/tomo/Dropbox/sorghum2")
 
 ### parameters ###
-data1 <- "Mexico2013~15_F1-A"
-data2 <- "Mexico2013~15_F1-B"
+data1 <- "Mexico2013~15_inbred"
+data2 <- "Mexico2013~15_F1-A"
 
 ## data
-geno <- read.csv("data/GATK_F1.csv", row.names = 1)
+geno <- read.csv("data/GATK_all.csv", row.names = 1)
 pheno <- read.csv(paste("data/",data1,".csv",sep=""), row.names=1)
 test <- read.csv(paste("data/",data2,".csv",sep=""), row.names=1)
+test <- test[!(rownames(test) %in% c("B2", "B31")),]
 
 colnames(geno) <- gsub("B2.","B2/",colnames(geno))
 colnames(geno) <- gsub("B31.","B31/",colnames(geno))
@@ -32,12 +33,19 @@ Prediction.rrBLUP <- function(Method){
   Predictions <- matrix(NA, nr=nrow(test), nc=ncol(test), dimnames=dimnames(test))
   require(rrBLUP)
 
-    for(i in 1:ncol(test)){
-      print(paste("->",i,"/",ncol(test),sep=""))
-      Result <- kinship.BLUP(y = Pheno[,i], G.train = Geno, G.pred = Geno_test[,,drop = FALSE], K.method = Method)
-      Predictions[,i] <- as.vector(Result$g.pred) + Result$beta
+  for(i in 1:nrow(test)){
+    print(paste(i,"/",nrow(test),sep=""))
+    F1name <- rownames(test)[i]
+    name <- gsub("B[[:digit:]]/","",F1name)
+    training <- Pheno[!(rownames(Pheno) %in% name),]
+
+    for(k in 1:ncol(test)){
+      print(paste("->",k,"/",ncol(test),sep=""))
+      Result <- kinship.BLUP(y = training[,k], G.train = Geno[!(rownames(Pheno) %in% name),], G.pred = Geno_test[F1name,,drop = FALSE], K.method = Method)
+      Predictions[i,k] <- as.vector(Result$g.pred) + Result$beta
     }
 
+}
   return(Predictions)
 
 }
