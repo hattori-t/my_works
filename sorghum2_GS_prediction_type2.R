@@ -131,7 +131,7 @@ Prediction.glmnet <- function(Alpha){
       }else{
         Result <- cv.glmnet (y=training[,k], x=Geno[!(rownames(Pheno) %in% removes),], alpha=Alpha)
       }
-      Predictions[i,k] <- predict(Result, newx=F1Geno[F1name,,drop = FALSE])
+      Predictions[i,k] <- predict(Result, newx=Geno_test[F1name,,drop = FALSE])
     }
 
   }
