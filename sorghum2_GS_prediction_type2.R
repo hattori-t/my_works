@@ -107,3 +107,62 @@ rownames(cor_RKHS) <- colnames(test)
 write.csv(cor_RKHS, paste("Prediction_type2_",data1,"_to_",data2,"_RKHS/cor_RKHS.csv",sep=""))
 rownames(rmse_RKHS) <- colnames(test)
 write.csv(rmse_RKHS, paste("Prediction_type2_",data1,"_to_",data2,"_RKHS/rmse_RKHS.csv",sep=""))
+
+
+
+####################
+## glmnet Lasso
+Prediction.glmnet <- function(Alpha){
+
+  Predictions <- matrix(NA, nr=nrow(test), nc=ncol(test), dimnames=dimnames(test))
+  require(glmnet)
+
+  for(i in 1:nrow(test)){
+    print(paste(i,"/",nrow(test),sep=""))
+    F1name <- rownames(test)[i]
+    name <- gsub("B[[:digit:]]/","",F1name)
+    removes <- c(F1name,name)
+    training <- Pheno[!(rownames(Pheno) %in% removes),]
+
+    for(k in 1:ncol(test)){
+      print(paste("->",k,"/",ncol(test),sep=""))
+      if(any(is.na(training[,k]))){
+        Result <- cv.glmnet (y=training[,k][!is.na(training[,k])], x=Geno[!(rownames(Pheno) %in% removes),][!is.na(training[,k]),], alpha=Alpha)
+      }else{
+        Result <- cv.glmnet (y=training[,k], x=Geno[!(rownames(Pheno) %in% removes),], alpha=Alpha)
+      }
+      Predictions[i,k] <- predict(Result, newx=F1Geno[F1name,,drop = FALSE])
+    }
+
+  }
+  dimnames(Predictions) <- dimnames(test)
+  return(Predictions)
+
+}
+
+Predictedvalues.lasso <- Prediction.glmnet(0)
+
+#plot
+cor_lasso <- NULL
+rmse_lasso <- NULL
+
+for(i in 1:ncol(test)){
+  pdf(paste("Prediction_",data1,"_to_",data2,"/",phenolist[i],"_lasso.pdf",sep=""))
+  plot(test[,i], Predictedvalues.lasso[,i], xlab = "Observed Value", ylab = "Predicted Value", main = paste(phenolist[i],"_lasso",sep = ""))
+  abline(0, 1, lty = "dotted")
+  Cor <- cor(test[,i], Predictedvalues.lasso[,i], use="pair")
+  Core <- sprintf("%.2f", Cor)
+  mse <- round(sum((test[,i] - Predictedvalues.lasso[,i])^2,na.rm = T) / length(test[,i]), 2)
+  rmse <- round(sqrt(mse), 2)
+  legend("bottomright", legend = paste("r=", Core, " rmse=", rmse, sep = ""), bty="n")
+  cor_lasso <- rbind(cor_lasso, Core)
+  rmse_lasso <- rbind(rmse_lasso,rmse)
+  dev.off()
+}
+
+dimnames(Predictedvalues.lasso) <- dimnames(test)
+write.csv(Predictedvalues.lasso, paste("Prediction_",data1,"_to_",data2,"/Predictedvalues_lasso.csv",sep=""))
+rownames(cor_lasso) <- colnames(test)
+write.csv(cor_lasso, paste("Prediction_",data1,"_to_",data2,"/cor_lasso.csv",sep=""))
+rownames(rmse_lasso) <- colnames(test)
+write.csv(rmse_lasso, paste("Prediction_",data1,"_to_",data2,"/rmse_lasso.csv",sep=""))
