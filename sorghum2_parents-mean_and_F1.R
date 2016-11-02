@@ -24,12 +24,17 @@ rownames(pheno_meanB2) <- paste("B2/",rownames(pheno_meanB2),sep = "")
 selector <- intersect(rownames(pheno_meanB2), rownames(MEX_F1))
 cor_res <- cor(pheno_meanB2[selector,], MEX_F1[selector,], use = "pair")
 res <- rep(NA,8)
+rmse <- rep(NA,8)
 for(i in 1:8){
   res[i] <- cor_res[i,i]
+  mse <- round(sum((MEX_F1[selector,i] - pheno_meanB2[selector,i])^2,na.rm = T) / length(MEX_F1[selector,i]), 2)
+  rmse[i] <- round(sqrt(mse), 2)
 }
 names(res) <- colnames(pheno_meanB2)
+names(rmse) <- colnames(pheno_meanB2)
 dir.create("MEX-B2")
 write.csv(res,"MEX-B2/cor_meanvsF1_MEXB2.csv")
+write.csv(rmse,"MEX-B2/rmse_meanvsF1_MEXB2.csv")
 
 for(i in 1:8){
   pdf(paste("MEX-B2/MEX-B2_phenotypic mean & F1 pheno_", phenolist[i],".pdf",sep=""))
@@ -53,12 +58,17 @@ rownames(pheno_meanB31) <- paste("B31/",rownames(pheno_meanB31),sep = "")
 selector <- intersect(rownames(pheno_meanB31), rownames(MEX_F1))
 cor_res <- cor(pheno_meanB31[selector,], MEX_F1[selector,], use = "pair")
 res <- rep(NA,8)
+rmse <- rep(NA,8)
 for(i in 1:8){
   res[i] <- cor_res[i,i]
+  mse <- round(sum((MEX_F1[selector,i] - pheno_meanB31[selector,i])^2,na.rm = T) / length(MEX_F1[selector,i]), 2)
+  rmse[i] <- round(sqrt(mse), 2)
 }
 names(res) <- colnames(pheno_meanB31)
+names(rmse) <- colnames(pheno_meanB31)
 dir.create("MEX-B31")
 write.csv(res,"MEX-B31/cor_meanvsF1_MEXB31.csv")
+write.csv(rmse,"MEX-B31/rmse_meanvsF1_MEXB31.csv")
 
 for(i in 1:8){
   pdf(paste("MEX-B31/MEX-B31_phenotypic mean & F1 pheno_", phenolist[i],".pdf",sep=""))
@@ -92,12 +102,17 @@ rownames(pheno_meanB2) <- paste("B2/",rownames(pheno_meanB2),sep = "")
 selector <- intersect(rownames(pheno_meanB2), rownames(Fuku_F1))
 cor_res <- cor(pheno_meanB2[selector,], Fuku_F1[selector,], use = "pair")
 res <- rep(NA,8)
+rmse <- rep(NA,8)
 for(i in 1:8){
   res[i] <- cor_res[i,i]
+  mse <- round(sum((Fuku_F1[selector,i] - pheno_meanB2[selector,i])^2,na.rm = T) / length(Fuku_F1[selector,i]), 2)
+  rmse[i] <- round(sqrt(mse), 2)
 }
 names(res) <- colnames(pheno_meanB2)
+names(rmse) <- colnames(pheno_meanB2)
 dir.create("Fuku-B2")
 write.csv(res,"Fuku-B2/cor_meanvsF1_FukuB2.csv")
+write.csv(rmse,"Fuku-B2/rmse_meanvsF1_FukuB2.csv")
 
 for(i in 1:8){
   pdf(paste("Fuku-B2/Fuku-B2_phenotypic mean & F1 pheno_", phenolist[i],".pdf",sep=""))
@@ -121,12 +136,17 @@ rownames(pheno_meanB31) <- paste("B31/",rownames(pheno_meanB31),sep = "")
 selector <- intersect(rownames(pheno_meanB31), rownames(Fuku_F1))
 cor_res <- cor(pheno_meanB31[selector,], Fuku_F1[selector,], use = "pair")
 res <- rep(NA,8)
+rmse <- rep(NA,8)
 for(i in 1:8){
   res[i] <- cor_res[i,i]
+  mse <- round(sum((Fuku_F1[selector,i] - pheno_meanB31[selector,i])^2,na.rm = T) / length(Fuku_F1[selector,i]), 2)
+  rmse[i] <- round(sqrt(mse), 2)
 }
 names(res) <- colnames(pheno_meanB31)
+names(rmse) <- colnames(pheno_meanB31)
 dir.create("Fuku-B31")
 write.csv(res,"Fuku-B31/cor_meanvsF1_FukuB31.csv")
+write.csv(rmse,"Fuku-B31/rmse_meanvsF1_FukuB31.csv")
 
 for(i in 1:8){
   pdf(paste("Fuku-B31/Fuku-B31_phenotypic mean & F1 pheno_", phenolist[i],".pdf",sep=""))
