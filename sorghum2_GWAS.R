@@ -52,11 +52,11 @@ for(i in 1:ncol(pheno)){
   colnames(amat) <- rownames(amat) <- rownames(x)
   
   # perform GWAS
-  res.gwas <- GWAS(p, g, K = amat, n.PC = 6, min.MAF = 0.05, plot = T)
+  res.gwas <- GWAS(p, g, K = amat, n.PC = 6, min.MAF = 0.05, plot = F)
   write.csv(res.gwas,paste("res_gwas_",data,"_",traitname,".csv",sep = ""))
   
   # draw a manhattan plot
-  pdf(paste("res_gwas_",data,"_",traitname,".csv", sep = ""), height = 4)
+  pdf(paste("res_gwas_",data,"_",traitname,".pdf", sep = ""), height = 4)
   plot(map$cum.pos, res.gwas[,4], col=co, pch=20, main = paste(data,"_",traitname,sep=""), xlab = "Chromosome", ylab = "-log10(p)", xaxt="n")
   abline(h = 5, lty = "dotted")
   axis(1, at = chr_start, labels = chr_No)
