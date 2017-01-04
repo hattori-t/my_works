@@ -68,7 +68,7 @@ Prediction.BGLR_AD <- function(Za, Zd, Pheno, Partition, Method){
     for (fold in 1:Nfold){
       cat("trait",trait,"fold",fold,"\n")
       Test <- Partition[,fold]
-      ETA <- list(Additive = list(X=Za, model = Method), Dominance = list(X=Zd, model = Method))
+      ETA <- list(Additive = list(X=Za[-Test,], model = Method), Dominance = list(X=Zd[-Test,], model = Method))
       Result <- BGLR(y = Pheno[-Test,trait], ETA = ETA, verbose = F)
       Predictions[Test,trait] <- as.vector(Result$yHat[Test])
     } 
@@ -122,7 +122,7 @@ Prediction.BGLR_A <- function(Za, Zd, Pheno, Partition, Method){
     for (fold in 1:Nfold){
       cat("trait",trait,"fold",fold,"\n")
       Test <- Partition[,fold]
-      ETA <- list(Additive = list(X=Za, model = Method), Dominance = list(X=Zd, model = Method))
+      ETA <- list(Additive = list(X=Za[-Test,], model = Method), Dominance = list(X=Zd[-Test,], model = Method))
       Result <- BGLR(y = Pheno[-Test,trait], ETA = ETA, verbose = F)
       Predictions[Test,trait] <- as.vector(Result$yHat[Test])
     } 
