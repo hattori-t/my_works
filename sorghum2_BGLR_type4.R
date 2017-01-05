@@ -1,11 +1,10 @@
 setwd("/Users/tomo/Dropbox/sorghum2/BGLR")
 
-## Type:4 ##
-## parameters
+## Type:4 F1-A,B Cross-validation with BGLR ##
+# parameters
 data <- commandArgs(trailingOnly = T)[1]
 type <- commandArgs(trailingOnly = T)[2]
 repeatNo <- commandArgs(trailingOnly = T)[3]
-TYPE <- commandArgs(trailingOnly = T)[4]
 
 ## data
 geno <- read.csv(paste("data/GATK_",type,".csv",sep=""), row.names = 1)
@@ -49,7 +48,7 @@ Partition <- as.matrix(read.table(paste("data/partition/10fold.N", nrow(Pheno), 
 #############
 ## BGLR
 ## Additive with Dominance (AD) ##
-setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type4/", TYPE, "/AD/fold", repeatNo, sep="" ))
+setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type4/", data, "_", type, "/AD/fold", repeatNo, sep="" ))
 Prediction.BGLR_AD <- function(Za, Zd, Pheno, Partition, Method){
 
   Nl <- nrow(Pheno)
@@ -65,11 +64,13 @@ Prediction.BGLR_AD <- function(Za, Zd, Pheno, Partition, Method){
     for (fold in 1:Nfold){
       cat("trait",trait,"fold",fold,"\n")
       Test <- Partition[,fold]
-      ETA <- list(Additive = list(X=Za[-Test,], model = Method), Dominance = list(X=Zd[-Test,], model = Method))
-      Result <- BGLR(y = Pheno[-Test,trait], ETA = ETA, verbose = F)
+      train <- Pheno
+      ETA <- list(Additive = list(X=Za, model = Method), Dominance = list(X=Zd, model = Method))
+      Result <- BGLR(y = train[,trait], ETA = ETA, verbose = F)
       Predictions[Test,trait] <- as.vector(Result$yHat[Test])
     }
   }
+  dimnames(Predictions) <- dimnames(Pheno)
   return(Predictions)
 }
 
@@ -104,12 +105,11 @@ write.csv(rmse_BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_rmse_BGLR_AD.cs
 
 #######################
 ## Additive only (A) ##
-setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type4/", TYPE, "/A/fold", repeatNo, sep="" ))
-Prediction.BGLR_A <- function(Za, Zd, Pheno, Partition, Method){
+setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type4/", data, "_", type, "/A/fold", repeatNo, sep="" ))
+Prediction.BGLR_A <- function(Za, Pheno, Partition, Method){
 
   Nl <- nrow(Pheno)
   stopifnot(Nl == nrow(Za))
-  stopifnot(Nl == nrow(Zd))
   Ntrait <- ncol(Pheno)
   require(BGLR)
 
@@ -120,15 +120,17 @@ Prediction.BGLR_A <- function(Za, Zd, Pheno, Partition, Method){
     for (fold in 1:Nfold){
       cat("trait",trait,"fold",fold,"\n")
       Test <- Partition[,fold]
-      ETA <- list(Additive = list(X=Za[-Test,], model = Method), Dominance = list(X=Zd[-Test,], model = Method))
-      Result <- BGLR(y = Pheno[-Test,trait], ETA = ETA, verbose = F)
+      train <- Pheno
+      ETA <- list(Additive = list(X=Za, model = Method))
+      Result <- BGLR(y = train[,trait], ETA = ETA, verbose = F)
       Predictions[Test,trait] <- as.vector(Result$yHat[Test])
     }
   }
+  dimnames(Predictions) <- dimnames(Pheno)
   return(Predictions)
 }
 
-Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Geno_hetero, Pheno, Partition, "BRR")
+Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno, Partition, "BRR")
 
 #plot
 cor_BGLR_A <- NULL
