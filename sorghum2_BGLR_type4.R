@@ -122,6 +122,7 @@ Prediction.BGLR_A <- function(Za, Pheno, Partition, Method){
       cat("trait",trait,"fold",fold,"\n")
       Test <- Partition[,fold]
       train <- Pheno
+      train[Test, trait] <- NA
       ETA <- list(Additive = list(X=Za, model = Method))
       Result <- BGLR(y = train[,trait], ETA = ETA, verbose = F)
       Predictions[Test,trait] <- as.vector(Result$yHat[Test])
