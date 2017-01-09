@@ -1,11 +1,13 @@
 setwd("/Users/tomo/Dropbox/sorghum2/BGLR")
 
-#########################################################################
 #### Type:2,3 ####
 ## parameters
 data1 <- "Mexico2013~15_all"
 data2 <- "Mexico2013~15_F1-A"
 
+
+#################################################
+### A with D
 ## data
 geno <- read.csv("data/GATK_all.csv", row.names = 1)
 geno_hetero <- read.csv("data/GATK_all_hetero.csv", row.names = 1)
@@ -33,7 +35,6 @@ Geno_test <- t(geno[,line_test])
 
 ###############
 ## BGLR
-## Additive with Dominance (AD) ##
 setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type2/", data1, "_to_", data2, "/AD", sep="" ))
 Prediction.BGLR_AD <- function(Method){
 
@@ -87,8 +88,30 @@ rownames(rmse_BGLR_AD) <- colnames(test)
 write.csv(rmse_BGLR_AD, paste("Prediction_",data1,"_to_",data2,"_rmse_BGLR_AD.csv",sep=""))
 
 
-##########
-## Additive only (A) ##
+
+####################################################
+### A
+## data
+geno <- read.csv("data/GATK_all.csv", row.names = 1)
+pheno <- read.csv(paste("data/",data1,".csv",sep=""), row.names = 1)
+test <- read.csv(paste("data/",data2,".csv",sep=""), row.names = 1)
+test <- test[!(rownames(test) %in% c("B2", "B31")),]
+
+colnames(geno) <- gsub("B2.","B2/",colnames(geno))
+colnames(geno) <- gsub("B31.","B31/",colnames(geno))
+
+pheno_trim <- na.omit(pheno)
+line <- intersect(rownames(pheno_trim),colnames(geno))
+Pheno <- pheno_trim[line,]
+geno_trim <- geno[,line]
+Geno <- t(geno_trim)
+phenolist <- colnames(Pheno)
+
+line_test <- intersect(rownames(test),colnames(geno))
+Geno_test <- t(geno[,line_test])
+
+###############
+## BGLR
 setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type2/", data1, "_to_", data2, "/A", sep="" ))
 Prediction.BGLR_A <- function(Method){
 
@@ -140,4 +163,3 @@ rownames(cor_BGLR_A) <- colnames(test)
 write.csv(cor_BGLR_A, paste("Prediction_",data1,"_to_",data2,"_cor_BGLR_A.csv",sep=""))
 rownames(rmse_BGLR_A) <- colnames(test)
 write.csv(rmse_BGLR_A, paste("Prediction_",data1,"_to_",data2,"_rmse_BGLR_A.csv",sep=""))
-
