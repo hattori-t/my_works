@@ -5,7 +5,7 @@ require(rrBLUP)
 data <- "Mexico2013~15_inbred"
 
 ## data
-geno <- read.csv("data/GATK_all.csv", row.names = 1)
+geno <- read.csv("data/GATK_inbred.csv", row.names = 1)
 pheno <- read.csv(paste("data/",data,".csv",sep=""), row.names=1)
 map <- read.csv("data/GATK_map.csv", row.names = 1)
 
@@ -52,7 +52,7 @@ for(i in 1:ncol(pheno)){
   colnames(amat) <- rownames(amat) <- rownames(x)
   
   # perform GWAS
-  res.gwas <- GWAS(p, g, K = amat, n.PC = 9, min.MAF = 0.05, plot = F)
+  res.gwas <- GWAS(p, g, K = amat, n.PC = 3, min.MAF = 0.05, plot = F)
   write.csv(res.gwas,paste("res_gwas_",data,"_",traitname,".csv",sep = ""))
   
   # draw a manhattan plot
