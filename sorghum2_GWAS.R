@@ -52,7 +52,7 @@ for(i in 1:ncol(pheno)){
   colnames(amat) <- rownames(amat) <- rownames(x)
   
   # perform GWAS
-  res.gwas <- GWAS(p, g, K = amat, n.PC = 6, min.MAF = 0.05, plot = F)
+  res.gwas <- GWAS(p, g, K = amat, n.PC = 9, min.MAF = 0.05, plot = F)
   write.csv(res.gwas,paste("res_gwas_",data,"_",traitname,".csv",sep = ""))
   
   # draw a manhattan plot
