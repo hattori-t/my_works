@@ -114,12 +114,12 @@ write.csv(rmse_BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_rmse_BGLR_AD.cs
 ## Additive only (A) ##
 setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type2/", data, "_", type, "/A/fold", repeatNo, sep="" ))
 Prediction.BGLR_A <- function(Za, Pheno, Partition){
-  
+
   Nl <- nrow(Pheno)
   stopifnot(Nl == nrow(Za))
   Ntrait <- ncol(Pheno)
   require(BGLR)
-  
+
   Partition[Partition == -9] <- 0
   Nfold <- ncol(Partition)
   Predictions <- matrix(0, nc = Ntrait, nr = Nl)
@@ -138,7 +138,7 @@ Prediction.BGLR_A <- function(Za, Pheno, Partition){
   return(Predictions)
 }
 
-Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno)
+Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno, Partition)
 
 #line selecting
 select <- intersect(rownames(original),rownames(Predictedvalues.BGLR_A))

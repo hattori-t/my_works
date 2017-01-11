@@ -104,7 +104,7 @@ write.csv(rmse_BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_rmse_BGLR_AD.cs
 #######################
 ## Additive only (A) ##
 setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type4/", data, "_", type, "/A/fold", repeatNo, sep="" ))
-Prediction.BGLR_A <- function(Za, Pheno, Partition, Method){
+Prediction.BGLR_A <- function(Za, Pheno, Partition){
 
   Nl <- nrow(Pheno)
   stopifnot(Nl == nrow(Za))
@@ -120,7 +120,7 @@ Prediction.BGLR_A <- function(Za, Pheno, Partition, Method){
       Test <- Partition[,fold]
       train <- Pheno
       train[Test, trait] <- NA
-      ETA <- list(Additive = list(X=Za, model = Method))
+      ETA <- list(Additive = list(K=Za, model = "RKHS"))
       Result <- BGLR(y = train[,trait], ETA = ETA, verbose = F)
       Predictions[Test,trait] <- as.vector(Result$yHat[Test])
     }
@@ -129,7 +129,7 @@ Prediction.BGLR_A <- function(Za, Pheno, Partition, Method){
   return(Predictions)
 }
 
-Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno, Partition, "BRR")
+Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno, Partition)
 
 #plot
 cor_BGLR_A <- NULL

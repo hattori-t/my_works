@@ -50,7 +50,7 @@ Partition <- as.matrix(read.table(paste("data/partition/10fold.N", nrow(Pheno), 
 #############
 ## BGLR
 ## Additive with Dominance (AD) ##
-setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type2/", data, "_", prediction, "/AD/fold", repeatNo, sep="" ))
+setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type3/", data, "_", prediction, "/AD/fold", repeatNo, sep="" ))
 Prediction.BGLR_AD <- function(Za, Zd, Pheno, Partition){
 
   Nl <- nrow(Pheno)
@@ -113,7 +113,7 @@ write.csv(rmse_BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_rmse_BGLR_AD.cs
 
 #######################
 ## Additive only (A) ##
-setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type2/", data, "_", prediction, "/A/fold", repeatNo, sep="" ))
+setwd(paste("/Users/tomo/Dropbox/sorghum2/BGLR/type3/", data, "_", prediction, "/A/fold", repeatNo, sep="" ))
 Prediction.BGLR_A <- function(Za, Pheno, Partition){
 
   Nl <- nrow(Pheno)
@@ -139,7 +139,7 @@ Prediction.BGLR_A <- function(Za, Pheno, Partition){
   return(Predictions)
 }
 
-Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno)
+Predictedvalues.BGLR_A <- Prediction.BGLR_A(Geno, Pheno, Partition)
 
 #line selecting
 select <- intersect(rownames(original),rownames(Predictedvalues.BGLR_A))
