@@ -104,11 +104,11 @@ for(trait in 1:Ntrait){
 }
 
 dimnames(Predictedvalues.BGLR_AD) <- dimnames(Original)
-write.csv(Predictedvalues.BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_Predictedvalues_BGLR_AD.csv", sep = ""))
+write.csv(Predictedvalues.BGLR_AD,paste("res_",data,"_",prediction,"_",repeatNo,"_Predictedvalues_BGLR_AD.csv", sep = ""))
 rownames(cor_BGLR_AD) <- colnames(Original)
-write.csv(cor_BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_cor_BGLR_AD.csv", sep = ""))
+write.csv(cor_BGLR_AD,paste("res_",data,"_",prediction,"_",repeatNo,"_cor_BGLR_AD.csv", sep = ""))
 rownames(rmse_BGLR_AD) <- colnames(Original)
-write.csv(rmse_BGLR_AD,paste("res_",data,"_",type,"_",repeatNo,"_rmse_BGLR_AD.csv", sep = ""))
+write.csv(rmse_BGLR_AD,paste("res_",data,"_",prediction,"_",repeatNo,"_rmse_BGLR_AD.csv", sep = ""))
 
 
 #######################
@@ -166,8 +166,8 @@ for(trait in 1:Ntrait){
 }
 
 dimnames(Predictedvalues.BGLR_A) <- dimnames(Original)
-write.csv(Predictedvalues.BGLR_A,paste("res_",data,"_",type,"_",repeatNo,"_Predictedvalues_BGLR_A.csv", sep = ""))
+write.csv(Predictedvalues.BGLR_A,paste("res_",data,"_",prediction,"_",repeatNo,"_Predictedvalues_BGLR_A.csv", sep = ""))
 rownames(cor_BGLR_A) <- colnames(Original)
-write.csv(cor_BGLR_A,paste("res_",data,"_",type,"_",repeatNo,"_cor_BGLR_A.csv", sep = ""))
+write.csv(cor_BGLR_A,paste("res_",data,"_",prediction,"_",repeatNo,"_cor_BGLR_A.csv", sep = ""))
 rownames(rmse_BGLR_A) <- colnames(Original)
-write.csv(rmse_BGLR_A,paste("res_",data,"_",type,"_",repeatNo,"_rmse_BGLR_A.csv", sep = ""))
+write.csv(rmse_BGLR_A,paste("res_",data,"_",prediction,"_",repeatNo,"_rmse_BGLR_A.csv", sep = ""))
