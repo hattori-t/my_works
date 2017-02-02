@@ -255,7 +255,6 @@ for(traitNum in 1:ncol(pheno)){
       y.train <- y[id != i]
       x.train <- x[id != i,]
       x.test <- x[id == i,]
-      res <- randomForest(y = y.train, x = x.train)
       res <- foreach(ntree = rep(treeNum, cores), .combine = combine, .packages = "randomForest") %dopar% randomForest (y = y.train, x = x.train, ntree = ntree)
       y.pred[id == i] <- predict(res, newdata = x.test)
     }
@@ -274,8 +273,9 @@ for(traitNum in 1:ncol(pheno)){
 
     cor_10folds[N] <- cor
     rmse_10folds[N] <- rmse
+
+    stopCluster(cl)
   }
-  stopCluster(cl)
 
   dir.create(paste("GS_",data,"_",type,"/",regression,"/predictedvalues", sep = ""))
   rownames(predictedvalues) <- rownames(pheno)
