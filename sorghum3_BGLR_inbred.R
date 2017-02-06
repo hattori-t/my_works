@@ -22,7 +22,7 @@ Pheno <- pheno_trim[line,]
 geno_trim <- geno[line,line]
 Geno <- t(geno_trim)
 rfb_trim <- rfb[line,line]
-RFB <- t(RFB)
+RFB <- t(rfb_trim)
 phenolist <- colnames(Pheno)
 
 # partition
