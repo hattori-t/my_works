@@ -2,9 +2,6 @@ setwd("/Users/tomo/Dropbox/sorghum3")
 
 geno <- read.csv("data/GATK_all.csv",row.names = 1)  # AA:Aa:aa = 2:1:0
 
-colnames(geno) <- gsub("B2.","B2/",colnames(geno))
-colnames(geno) <- gsub("B31.","B31/",colnames(geno))
-
 # allele frequency of [A]
 A_freq <- rowSums(geno) / (2*ncol(geno))
 
@@ -72,18 +69,12 @@ require(rrBLUP)
 
 ## Amat
 geno <- read.csv("data/GATK_all_centered.csv", row.names = 1)
-colnames(geno) <- gsub("B2.","B2/",colnames(geno))
-colnames(geno) <- gsub("B31.","B31/",colnames(geno))
-
 Geno <- t(geno)
 amat <- A.mat(Geno, shrink = T)
 write.csv(amat, "amat_rrBLUP_GATK_all.csv")
 
 ## Dmat
 geno <- read.csv("data/GATK_all_centered_hetero.csv", row.names = 1)
-colnames(geno) <- gsub("B2.","B2/",colnames(geno))
-colnames(geno) <- gsub("B31.","B31/",colnames(geno))
-
 Geno <- t(geno)
 dmat <- A.mat(Geno, shrink = T)
 write.csv(dmat, "dmat_rrBLUP_GATK_all.csv")
