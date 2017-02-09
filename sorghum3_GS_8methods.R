@@ -707,6 +707,8 @@ colnames(result) <- c("r","rmse")
 Prediction <- matrix(NA, nrow=nrow(pheno),ncol=ncol(pheno))
 dimnames(Prediction) <- dimnames(pheno)
 
+theta <- read.csv(paste("data/theta_",data,".csv",sep=""), row.names = 1)
+
 for(traitNum in 1:ncol(pheno)){
   traitname <- colnames(pheno)[traitNum]
   print(traitname)
@@ -717,6 +719,7 @@ for(traitNum in 1:ncol(pheno)){
   selector <- !is.na(y)
   y <- y[selector]
   x <- d[selector,selector]
+  x <- exp(-(x/theta[traitname,])^2)
   
   # predict
   predictedvalues <- matrix(NA, nrow=nrow(pheno), ncol=10)
