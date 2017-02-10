@@ -10,6 +10,7 @@ pheno <- read.csv(paste("data/",data,"2013~15_inbred.csv",sep=""), row.names=1)
 xmat <- t(as.matrix(geno))
 rownames(xmat) <- gsub("B2.","B2/",rownames(xmat))
 rownames(xmat) <- gsub("B31.","B31/",rownames(xmat))
+rownames(xmat) <- gsub("EN12.","EN12-",rownames(xmat))
 
 doubles <- intersect(rownames(pheno),rownames(xmat))
 pheno <- pheno[doubles,]
