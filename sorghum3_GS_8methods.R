@@ -596,6 +596,7 @@ write.csv(Prediction, paste("GS_",data,"_inbred/",regression,"/Prediction_",regr
 amat <- read.csv("data/amat_GATK_all.csv", row.names = 1)
 d <- read.csv("data/scaled_dist.csv", row.names = 1)
 pheno <- read.csv(paste("data/",data,"2013~15_inbred.csv",sep=""), row.names=1)
+rownames(pheno) <- gsub("EN12-","EN12.",rownames(pheno))
 
 doubles <- intersect(rownames(pheno),rownames(amat))
 pheno <- pheno[doubles,]
@@ -620,27 +621,27 @@ dimnames(Prediction) <- dimnames(pheno)
 for(traitNum in 1:ncol(pheno)){
   traitname <- colnames(pheno)[traitNum]
   print(traitname)
-  
+
   y <- pheno[, traitname]
-  
+
   # remove missing samples
   selector <- !is.na(y)
   y <- y[selector]
   x <- amat[selector,selector]
-  
+
   # predict
   predictedvalues <- matrix(NA, nrow=nrow(pheno), ncol=10)
   cor_10folds <- rep(NA, 10)
   rmse_10folds <- rep(NA, 10)
-  
+
   for(N in 1:10){
     dir.create(paste("GS_",data,"_inbred/",regression,"/fold",N, sep = ""))
-    
+
     # 10 fold Cross-validation
     nfold <- 10
     id <- sample(1:length(y) %% nfold)
     id[id == 0] <- nfold
-    
+
     y.pred <- rep(NA, length(y))
     for(i in 1:nfold) {
       print(i)
@@ -650,9 +651,9 @@ for(traitNum in 1:ncol(pheno)){
       res <- BGLR(y = y.train, ETA = ETA, verbose = F)
       y.pred[id == i] <- as.vector(res$yHat[id == i])
     }
-    
+
     predictedvalues[selector,N] <- y.pred
-    
+
     #plot
     pdf(paste("GS_",data,"_inbred/", regression,"/fold",N, "/", N, "_", traitname,".pdf", sep = ""))
     plot(pheno[,traitNum], predictedvalues[,N], xlab = "Observed Value", ylab = "Predicted Value", main = paste(colnames(pheno)[traitNum],"_",regression,"_",N,sep = ""))
@@ -662,16 +663,16 @@ for(traitNum in 1:ncol(pheno)){
     rmse <- sqrt(mse)
     legend("bottomright", legend = paste("r=", round(cor,2), " rmse=", round(rmse,2), sep = ""), bty="n")
     dev.off()
-    
+
     cor_10folds[N] <- cor
     rmse_10folds[N] <- rmse
   }
-  
+
   dir.create(paste("GS_",data,"_inbred/",regression,"/predictedvalues", sep = ""))
   rownames(predictedvalues) <- rownames(pheno)
   colnames(predictedvalues) <- c("fold1","fold2","fold3","fold4","fold5","fold6","fold7","fold8","fold9","fold10")
   write.csv(predictedvalues,paste("GS_",data,"_inbred/",regression,"/predictedvalues/predictedvalues_",traitname,"_",regression,".csv",sep=""))
-  
+
   dir.create(paste("GS_",data,"_inbred/",regression,"/cor_and_rmse", sep = ""))
   res_values <- matrix(NA,nrow = 12, ncol = 2)
   rownames(res_values) <- c("fold1","fold2","fold3","fold4","fold5","fold6","fold7","fold8","fold9","fold10","mean","SD")
@@ -683,13 +684,13 @@ for(traitNum in 1:ncol(pheno)){
   res_values[12,1] <- sd(cor_10folds)
   res_values[12,2] <- sd(rmse_10folds)
   write.csv(res_values,paste("GS_",data,"_inbred/",regression,"/cor_and_rmse/cor_and_rmse_",traitname,"_",regression,".csv",sep=""))
-  
+
   result[traitNum,] <- as.numeric(res_values[11,])
-  
+
   for(i in 1:nrow(pheno)){
     Prediction[i,traitNum] <- mean(as.numeric(predictedvalues[i,]))
   }
-  
+
 }
 
 write.csv(result, paste("GS_",data,"_inbred/",regression,"/result_",regression,".csv",sep=""))
@@ -713,28 +714,28 @@ theta <- read.csv(paste("data/theta_",data,".csv",sep=""), row.names = 1)
 for(traitNum in 1:ncol(pheno)){
   traitname <- colnames(pheno)[traitNum]
   print(traitname)
-  
+
   y <- pheno[, traitname]
-  
+
   # remove missing samples
   selector <- !is.na(y)
   y <- y[selector]
   x <- d[selector,selector]
   x <- exp(-(x/theta[traitname,])^2)
-  
+
   # predict
   predictedvalues <- matrix(NA, nrow=nrow(pheno), ncol=10)
   cor_10folds <- rep(NA, 10)
   rmse_10folds <- rep(NA, 10)
-  
+
   for(N in 1:10){
     dir.create(paste("GS_",data,"_inbred/",regression,"/fold",N, sep = ""))
-    
+
     # 10 fold Cross-validation
     nfold <- 10
     id <- sample(1:length(y) %% nfold)
     id[id == 0] <- nfold
-    
+
     y.pred <- rep(NA, length(y))
     for(i in 1:nfold) {
       print(i)
@@ -744,9 +745,9 @@ for(traitNum in 1:ncol(pheno)){
       res <- BGLR(y = y.train, ETA = ETA, verbose = F)
       y.pred[id == i] <- as.vector(res$yHat[id == i])
     }
-    
+
     predictedvalues[selector,N] <- y.pred
-    
+
     #plot
     pdf(paste("GS_",data,"_inbred/", regression,"/fold",N, "/", N, "_", traitname,".pdf", sep = ""))
     plot(pheno[,traitNum], predictedvalues[,N], xlab = "Observed Value", ylab = "Predicted Value", main = paste(colnames(pheno)[traitNum],"_",regression,"_",N,sep = ""))
@@ -756,16 +757,16 @@ for(traitNum in 1:ncol(pheno)){
     rmse <- sqrt(mse)
     legend("bottomright", legend = paste("r=", round(cor,2), " rmse=", round(rmse,2), sep = ""), bty="n")
     dev.off()
-    
+
     cor_10folds[N] <- cor
     rmse_10folds[N] <- rmse
   }
-  
+
   dir.create(paste("GS_",data,"_inbred/",regression,"/predictedvalues", sep = ""))
   rownames(predictedvalues) <- rownames(pheno)
   colnames(predictedvalues) <- c("fold1","fold2","fold3","fold4","fold5","fold6","fold7","fold8","fold9","fold10")
   write.csv(predictedvalues,paste("GS_",data,"_inbred/",regression,"/predictedvalues/predictedvalues_",traitname,"_",regression,".csv",sep=""))
-  
+
   dir.create(paste("GS_",data,"_inbred/",regression,"/cor_and_rmse", sep = ""))
   res_values <- matrix(NA,nrow = 12, ncol = 2)
   rownames(res_values) <- c("fold1","fold2","fold3","fold4","fold5","fold6","fold7","fold8","fold9","fold10","mean","SD")
@@ -777,13 +778,13 @@ for(traitNum in 1:ncol(pheno)){
   res_values[12,1] <- sd(cor_10folds)
   res_values[12,2] <- sd(rmse_10folds)
   write.csv(res_values,paste("GS_",data,"_inbred/",regression,"/cor_and_rmse/cor_and_rmse_",traitname,"_",regression,".csv",sep=""))
-  
+
   result[traitNum,] <- as.numeric(res_values[11,])
-  
+
   for(i in 1:nrow(pheno)){
     Prediction[i,traitNum] <- mean(as.numeric(predictedvalues[i,]))
   }
-  
+
 }
 
 write.csv(result, paste("GS_",data,"_inbred/",regression,"/result_",regression,".csv",sep=""))
