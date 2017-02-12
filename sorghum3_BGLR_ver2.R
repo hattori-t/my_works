@@ -89,7 +89,7 @@ for(k in 1:ncol(pheno)){
     x <- amat[rownames(y),rownames(y)]
     ETA <- list(list(K = x, model = "RKHS"))
     res <- BGLR(y = y.train, ETA = ETA, verbose = F)
-    y.pred[i] <- res$yHat[which(rownames(y)==removes)]
+    y.pred[i] <- res$yHat[which(rownames(y)==testname)]
   }
 
   prediction[,k] <- as.vector(y.pred)
@@ -147,7 +147,7 @@ for(k in 1:ncol(pheno)){
     Zd <- dmat[rownames(y),rownames(y)]
     ETA <- list(list(K = x, model = "RKHS"),list(K = Zd, model = "RKHS"))
     res <- BGLR(y = y.train, ETA = ETA, verbose = F)
-    y.pred[i] <- res$yHat[which(rownames(y)==removes)]
+    y.pred[i] <- res$yHat[which(rownames(y)==testname)]
   }
   
   prediction[,k] <- as.vector(y.pred)
@@ -219,7 +219,7 @@ for(k in 1:ncol(pheno)){
     x <- d[rownames(y),rownames(y)]
     ETA <- list(list(K = exp(-(x/theta)^2), model = "RKHS"))
     res <- BGLR(y = y.train, ETA = ETA, verbose = F)
-    y.pred[i] <- res$yHat[which(rownames(y)==removes)]
+    y.pred[i] <- res$yHat[which(rownames(y)==testname)]
   }
   
   prediction[,k] <- as.vector(y.pred)
