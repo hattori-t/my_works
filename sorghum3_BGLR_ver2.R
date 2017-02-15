@@ -123,12 +123,12 @@ colnames(result) <- c("r","rmse")
 for(k in 1:ncol(pheno)){
   traitname <- colnames(pheno)[k]
   print(traitname)
-  
+
   # remove missing samples
   y <- pheno[, traitname]
   selector <- !is.na(y)
   name <- rownames(pheno)[selector]
-  
+
   # predict
   y.pred <- rep(NA, length(rownames(test)))
   for(i in 1:nrow(test)) {
@@ -139,7 +139,7 @@ for(k in 1:ncol(pheno)){
     name_B31 <- paste("B31/",name_inbred,sep = "")
     remove_names <- c(name_inbred,name_B2,name_B31)
     removes <- intersect(remove_names, rownames(pheno))
-    
+
     y <- pheno
     y[removes,traitname] <- NA
     y.train <- y[,traitname]
@@ -149,7 +149,7 @@ for(k in 1:ncol(pheno)){
     res <- BGLR(y = y.train, ETA = ETA, verbose = F)
     y.pred[i] <- res$yHat[which(rownames(y)==testname)]
   }
-  
+
   prediction[,k] <- as.vector(y.pred)
 
   #plot
@@ -181,7 +181,7 @@ colnames(result) <- c("r","rmse")
 res_theta <- matrix(NA, nrow = 11, ncol = 1)
 rownames(res_theta) <- colnames(pheno)
 colnames(res_theta) <- c("theta")
-para <- c(1:100)/10
+para <- c(1:10)/10
 
 for(k in 1:ncol(pheno)){
   traitname <- colnames(pheno)[k]
@@ -212,7 +212,7 @@ for(k in 1:ncol(pheno)){
     name_B31 <- paste("B31/",name_inbred,sep = "")
     remove_names <- c(name_inbred,name_B2,name_B31)
     removes <- intersect(remove_names, rownames(pheno))
-    
+
     y <- pheno
     y[removes,traitname] <- NA
     y.train <- y[,traitname]
@@ -221,7 +221,7 @@ for(k in 1:ncol(pheno)){
     res <- BGLR(y = y.train, ETA = ETA, verbose = F)
     y.pred[i] <- res$yHat[which(rownames(y)==testname)]
   }
-  
+
   prediction[,k] <- as.vector(y.pred)
 
   #plot

@@ -181,7 +181,7 @@ colnames(result) <- c("r","rmse")
 res_theta <- matrix(NA, nrow = 11, ncol = 1)
 rownames(res_theta) <- colnames(pheno)
 colnames(res_theta) <- c("theta")
-para <- c(1:100)/10
+para <- c(1:10)/10
 
 for(k in 1:ncol(pheno)){
   traitname <- colnames(pheno)[k]
