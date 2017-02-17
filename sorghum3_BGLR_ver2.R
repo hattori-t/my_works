@@ -51,12 +51,12 @@ test <- test[selecting_test,]
 
 test <- test[!(rownames(test) %in% c("B2", "B31")),]
 
-dir.create(paste("LOO_",data,"_",trainingdata,"_to_",testdata, sep = ""))
+dir.create(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata, sep = ""))
 
 
 ## G-BLUP ##
 regression <- "G-BLUP"
-dir.create(paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression, sep = ""))
+dir.create(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression, sep = ""))
 
 prediction <- matrix(NA, nr=nrow(test), nc=ncol(test), dimnames=dimnames(test))
 result <- matrix(NA, nrow = 11, ncol = 2)
@@ -95,7 +95,7 @@ for(k in 1:ncol(pheno)){
   prediction[,k] <- as.vector(y.pred)
 
   #plot
-  pdf(paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/",traitname,".pdf",sep = ""))
+  pdf(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/",traitname,".pdf",sep = ""))
   plot(test[,k], prediction[,k], xlab = "Observed Value", ylab = "Predicted Value", main = paste(colnames(test)[k],"_",regression,sep = ""))
   abline(0, 1, lty = "dotted")
   cor <- cor(test[,k], prediction[,k], use="pair")
@@ -107,13 +107,13 @@ for(k in 1:ncol(pheno)){
   result[k,] <- c(cor,rmse)
 }
 
-write.csv(prediction, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/predictedvalues_",regression,".csv",sep = ""))
-write.csv(result, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/result_",regression,".csv",sep = ""))
+write.csv(prediction, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/predictedvalues_",regression,".csv",sep = ""))
+write.csv(result, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/result_",regression,".csv",sep = ""))
 
 
 ## dominance ##
 regression <- "dominance"
-dir.create(paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression, sep = ""))
+dir.create(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression, sep = ""))
 
 prediction <- matrix(NA, nr=nrow(test), nc=ncol(test), dimnames=dimnames(test))
 result <- matrix(NA, nrow = 11, ncol = 2)
@@ -153,7 +153,7 @@ for(k in 1:ncol(pheno)){
   prediction[,k] <- as.vector(y.pred)
 
   #plot
-  pdf(paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/",traitname,".pdf",sep = ""))
+  pdf(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/",traitname,".pdf",sep = ""))
   plot(test[,k], prediction[,k], xlab = "Observed Value", ylab = "Predicted Value", main = paste(colnames(test)[k],"_",regression,sep = ""))
   abline(0, 1, lty = "dotted")
   cor <- cor(test[,k], prediction[,k], use="pair")
@@ -165,13 +165,13 @@ for(k in 1:ncol(pheno)){
   result[k,] <- c(cor,rmse)
 }
 
-write.csv(prediction, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/predictedvalues_",regression,".csv",sep = ""))
-write.csv(result, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/result_",regression,".csv",sep = ""))
+write.csv(prediction, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/predictedvalues_",regression,".csv",sep = ""))
+write.csv(result, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/result_",regression,".csv",sep = ""))
 
 
 ## Gausian kernel ##
 regression <- "GAUSS"
-dir.create(paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression, sep = ""))
+dir.create(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression, sep = ""))
 
 prediction <- matrix(NA, nr=nrow(test), nc=ncol(test), dimnames=dimnames(test))
 result <- matrix(NA, nrow = 11, ncol = 2)
@@ -225,7 +225,7 @@ for(k in 1:ncol(pheno)){
   prediction[,k] <- as.vector(y.pred)
 
   #plot
-  pdf(paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/",traitname,".pdf",sep = ""))
+  pdf(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/",traitname,".pdf",sep = ""))
   plot(test[,k], prediction[,k], xlab = "Observed Value", ylab = "Predicted Value", main = paste(colnames(test)[k],"_",regression,sep = ""))
   abline(0, 1, lty = "dotted")
   cor <- cor(test[,k], prediction[,k], use="pair")
@@ -238,6 +238,6 @@ for(k in 1:ncol(pheno)){
   res_theta[k,] <- theta
 }
 
-write.csv(prediction, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/predictedvalues_",regression,".csv",sep = ""))
-write.csv(result, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/result_",regression,".csv",sep = ""))
-write.csv(res_theta, paste("LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/res_theta_",regression,".csv",sep = ""))
+write.csv(prediction, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/predictedvalues_",regression,".csv",sep = ""))
+write.csv(result, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/result_",regression,".csv",sep = ""))
+write.csv(res_theta, paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata,"/",regression,"/res_theta_",regression,".csv",sep = ""))
