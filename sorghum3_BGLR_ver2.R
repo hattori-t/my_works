@@ -6,6 +6,7 @@ setwd("/Users/tomo/Dropbox/sorghum3")
 data <- commandArgs(trailingOnly = T)[1]
 trainingdata <- commandArgs(trailingOnly = T)[2]
 testdata <- commandArgs(trailingOnly = T)[3]
+repnumber <- commandArgs(trailingOnly = T)[4]
 
 ## data
 require(BGLR)
