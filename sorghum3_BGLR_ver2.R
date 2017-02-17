@@ -52,6 +52,7 @@ test <- test[selecting_test,]
 
 test <- test[!(rownames(test) %in% c("B2", "B31")),]
 
+dir.create(paste("BGLR_LOO_",repnumber, sep = ""))
 dir.create(paste("BGLR_LOO_",repnumber,"/LOO_",data,"_",trainingdata,"_to_",testdata, sep = ""))
 
 
