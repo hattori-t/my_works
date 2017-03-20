@@ -6,9 +6,9 @@ rmse <- matrix(NA,nr=11,nc=10)
 training <- c("inbred","F1-A","F1-B","inbred+F1-A","inbred+F1-B","F1-A+B","all")
 
 trait <- c("juice","brix","total.weight","log.total.weight","plant.height","panicle.length","culm.length","culm.number","culm.diameter","culm.area","culm.volume")
-columename <- c("inbred","F1-A","F1-B","inbred+F1-A","inbred+F1-B","F1-A+B","all","SD_inbred","SD_F1-A","SD_F1-B","SD_inbred+F1-A","SD_inbred+F1-B","SD_F1-A+B","SD_all")
+columename <- c("inbred","F1-A","F1-B","inbred+F1-A","inbred+F1-B","F1-A+B","all","SD_inbred","SD_F1-A","SD_F1-B","SD_inbred+F1-A","SD_inbred+F1-B","SD_F1-A+B","SD_all","RMSE_inbred","RMSE_F1-A","RMSE_F1-B","RMSE_inbred+F1-A","RMSE_inbred+F1-B","RMSE_F1-A+B","RMSE_all")
 
-res_box <- matrix(NA,nr=11,nc=14)
+res_box <- matrix(NA,nr=11,nc=21)
 rownames(res_box) <- trait
 colnames(res_box) <- columename
 
@@ -31,6 +31,7 @@ res_summary <- function(location,test,method){
     for(k in 1:11){
       RES_box[k,i] <- mean(R[k,])
       RES_box[k,i+7] <- sd(R[k,])
+      RES_box[k,i+14] <- mean(RMSE[k,])
     }
   }
   
@@ -59,7 +60,7 @@ res_summary("Fukushima","F1-B","GAUSS")
 setwd("/Users/tomo/Dropbox/sorghum3/results/res_summary/")
 dir.create("summary_for_paper")
 
-col2 <- c("G-BLUP","dominance","GAUSS","SD_G-BLUP","SD_dominance","SD_GAUSS")
+col2 <- c("G-BLUP","dominance","GAUSS","SD_G-BLUP","SD_dominance","SD_GAUSS","RMSE_G-BLUP","RMSE_dominance","RMSE_GAUSS")
 
 
 #MEX-A
@@ -68,13 +69,13 @@ gblup <- read.csv("res_summary_G-BLUP_Mexico_F1-A.csv",row.names = 1)
 dominance <- read.csv("res_summary_dominance_Mexico_F1-A.csv",row.names = 1)
 gauss <- read.csv("res_summary_GAUSS_Mexico_F1-A.csv",row.names = 1)
 
-inb <- matrix(NA,nr=11,nc=6)
-A <- matrix(NA,nr=11,nc=6)
-B <- matrix(NA,nr=11,nc=6)
-inbA <- matrix(NA,nr=11,nc=6)
-inbB <- matrix(NA,nr=11,nc=6)
-AB <- matrix(NA,nr=11,nc=6)
-inbAB <- matrix(NA,nr=11,nc=6)
+inb <- matrix(NA,nr=11,nc=9)
+A <- matrix(NA,nr=11,nc=9)
+B <- matrix(NA,nr=11,nc=9)
+inbA <- matrix(NA,nr=11,nc=9)
+inbB <- matrix(NA,nr=11,nc=9)
+AB <- matrix(NA,nr=11,nc=9)
+inbAB <- matrix(NA,nr=11,nc=9)
 
 rownames(inb) <- trait
 colnames(inb) <- col2
@@ -97,6 +98,9 @@ inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
+inb[,7] <- gblup[,1+14]
+inb[,8] <- dominance[,1+14]
+inb[,9] <- gauss[,1+14]
 write.csv(inb,"summary_for_paper/MEX-A/MEX_inbred_to_F1-A.csv")
 
 A[,1] <- gblup[,2]
@@ -105,6 +109,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
+A[,7] <- gblup[,2+14]
+A[,8] <- dominance[,2+14]
+A[,9] <- gauss[,2+14]
 write.csv(A,"summary_for_paper/MEX-A/MEX_F1-A_to_F1-A.csv")
 
 B[,1] <- gblup[,3]
@@ -113,6 +120,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
+B[,7] <- gblup[,3+14]
+B[,8] <- dominance[,3+14]
+B[,9] <- gauss[,3+14]
 write.csv(B,"summary_for_paper/MEX-A/MEX_F1-B_to_F1-A.csv")
 
 inbA[,1] <- gblup[,4]
@@ -121,6 +131,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
+inbA[,7] <- gblup[,4+14]
+inbA[,8] <- dominance[,4+14]
+inbA[,9] <- gauss[,4+14]
 write.csv(inbA,"summary_for_paper/MEX-A/MEX_inbred+F1-A_to_F1-A.csv")
 
 inbB[,1] <- gblup[,5]
@@ -129,6 +142,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
+inbB[,7] <- gblup[,5+14]
+inbB[,8] <- dominance[,5+14]
+inbB[,9] <- gauss[,5+14]
 write.csv(inbB,"summary_for_paper/MEX-A/MEX_inbred+F1-B_to_F1-A.csv")
 
 AB[,1] <- gblup[,6]
@@ -137,6 +153,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
+AB[,7] <- gblup[,6+14]
+AB[,8] <- dominance[,6+14]
+AB[,9] <- gauss[,6+14]
 write.csv(AB,"summary_for_paper/MEX-A/MEX_F1-A+B_to_F1-A.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -145,6 +164,9 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
+inbAB[,7] <- gblup[,7+14]
+inbAB[,8] <- dominance[,7+14]
+inbAB[,9] <- gauss[,7+14]
 write.csv(inbAB,"summary_for_paper/MEX-A/MEX_all_to_F1-A.csv")
 
 
@@ -154,13 +176,13 @@ gblup <- read.csv("res_summary_G-BLUP_Mexico_F1-B.csv",row.names = 1)
 dominance <- read.csv("res_summary_dominance_Mexico_F1-B.csv",row.names = 1)
 gauss <- read.csv("res_summary_GAUSS_Mexico_F1-B.csv",row.names = 1)
 
-inb <- matrix(NA,nr=11,nc=6)
-A <- matrix(NA,nr=11,nc=6)
-B <- matrix(NA,nr=11,nc=6)
-inbA <- matrix(NA,nr=11,nc=6)
-inbB <- matrix(NA,nr=11,nc=6)
-AB <- matrix(NA,nr=11,nc=6)
-inbAB <- matrix(NA,nr=11,nc=6)
+inb <- matrix(NA,nr=11,nc=9)
+A <- matrix(NA,nr=11,nc=9)
+B <- matrix(NA,nr=11,nc=9)
+inbA <- matrix(NA,nr=11,nc=9)
+inbB <- matrix(NA,nr=11,nc=9)
+AB <- matrix(NA,nr=11,nc=9)
+inbAB <- matrix(NA,nr=11,nc=9)
 
 rownames(inb) <- trait
 colnames(inb) <- col2
@@ -183,6 +205,9 @@ inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
+inb[,7] <- gblup[,1+14]
+inb[,8] <- dominance[,1+14]
+inb[,9] <- gauss[,1+14]
 write.csv(inb,"summary_for_paper/MEX-B/MEX_inbred_to_F1-B.csv")
 
 A[,1] <- gblup[,2]
@@ -191,6 +216,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
+A[,7] <- gblup[,2+14]
+A[,8] <- dominance[,2+14]
+A[,9] <- gauss[,2+14]
 write.csv(A,"summary_for_paper/MEX-B/MEX_F1-A_to_F1-B.csv")
 
 B[,1] <- gblup[,3]
@@ -199,6 +227,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
+B[,7] <- gblup[,3+14]
+B[,8] <- dominance[,3+14]
+B[,9] <- gauss[,3+14]
 write.csv(B,"summary_for_paper/MEX-B/MEX_F1-B_to_F1-B.csv")
 
 inbA[,1] <- gblup[,4]
@@ -207,6 +238,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
+inbA[,7] <- gblup[,4+14]
+inbA[,8] <- dominance[,4+14]
+inbA[,9] <- gauss[,4+14]
 write.csv(inbA,"summary_for_paper/MEX-B/MEX_inbred+F1-A_to_F1-B.csv")
 
 inbB[,1] <- gblup[,5]
@@ -215,6 +249,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
+inbB[,7] <- gblup[,5+14]
+inbB[,8] <- dominance[,5+14]
+inbB[,9] <- gauss[,5+14]
 write.csv(inbB,"summary_for_paper/MEX-B/MEX_inbred+F1-B_to_F1-B.csv")
 
 AB[,1] <- gblup[,6]
@@ -223,6 +260,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
+AB[,7] <- gblup[,6+14]
+AB[,8] <- dominance[,6+14]
+AB[,9] <- gauss[,6+14]
 write.csv(AB,"summary_for_paper/MEX-B/MEX_F1-A+B_to_F1-B.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -231,6 +271,9 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
+inbAB[,7] <- gblup[,7+14]
+inbAB[,8] <- dominance[,7+14]
+inbAB[,9] <- gauss[,7+14]
 write.csv(inbAB,"summary_for_paper/MEX-B/MEX_all_to_F1-B.csv")
 
 
@@ -240,13 +283,13 @@ gblup <- read.csv("res_summary_G-BLUP_Fukushima_F1-A.csv",row.names = 1)
 dominance <- read.csv("res_summary_dominance_Fukushima_F1-A.csv",row.names = 1)
 gauss <- read.csv("res_summary_GAUSS_Fukushima_F1-A.csv",row.names = 1)
 
-inb <- matrix(NA,nr=11,nc=6)
-A <- matrix(NA,nr=11,nc=6)
-B <- matrix(NA,nr=11,nc=6)
-inbA <- matrix(NA,nr=11,nc=6)
-inbB <- matrix(NA,nr=11,nc=6)
-AB <- matrix(NA,nr=11,nc=6)
-inbAB <- matrix(NA,nr=11,nc=6)
+inb <- matrix(NA,nr=11,nc=9)
+A <- matrix(NA,nr=11,nc=9)
+B <- matrix(NA,nr=11,nc=9)
+inbA <- matrix(NA,nr=11,nc=9)
+inbB <- matrix(NA,nr=11,nc=9)
+AB <- matrix(NA,nr=11,nc=9)
+inbAB <- matrix(NA,nr=11,nc=9)
 
 rownames(inb) <- trait
 colnames(inb) <- col2
@@ -269,6 +312,9 @@ inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
+inb[,7] <- gblup[,1+14]
+inb[,8] <- dominance[,1+14]
+inb[,9] <- gauss[,1+14]
 write.csv(inb,"summary_for_paper/Fuku-A/Fuku_inbred_to_F1-A.csv")
 
 A[,1] <- gblup[,2]
@@ -277,6 +323,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
+A[,7] <- gblup[,2+14]
+A[,8] <- dominance[,2+14]
+A[,9] <- gauss[,2+14]
 write.csv(A,"summary_for_paper/Fuku-A/Fuku_F1-A_to_F1-A.csv")
 
 B[,1] <- gblup[,3]
@@ -285,6 +334,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
+B[,7] <- gblup[,3+14]
+B[,8] <- dominance[,3+14]
+B[,9] <- gauss[,3+14]
 write.csv(B,"summary_for_paper/Fuku-A/Fuku_F1-B_to_F1-A.csv")
 
 inbA[,1] <- gblup[,4]
@@ -293,6 +345,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
+inbA[,7] <- gblup[,4+14]
+inbA[,8] <- dominance[,4+14]
+inbA[,9] <- gauss[,4+14]
 write.csv(inbA,"summary_for_paper/Fuku-A/Fuku_inbred+F1-A_to_F1-A.csv")
 
 inbB[,1] <- gblup[,5]
@@ -301,6 +356,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
+inbB[,7] <- gblup[,5+14]
+inbB[,8] <- dominance[,5+14]
+inbB[,9] <- gauss[,5+14]
 write.csv(inbB,"summary_for_paper/Fuku-A/Fuku_inbred+F1-B_to_F1-A.csv")
 
 AB[,1] <- gblup[,6]
@@ -309,6 +367,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
+AB[,7] <- gblup[,6+14]
+AB[,8] <- dominance[,6+14]
+AB[,9] <- gauss[,6+14]
 write.csv(AB,"summary_for_paper/Fuku-A/Fuku_F1-A+B_to_F1-A.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -317,6 +378,9 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
+inbAB[,7] <- gblup[,7+14]
+inbAB[,8] <- dominance[,7+14]
+inbAB[,9] <- gauss[,7+14]
 write.csv(inbAB,"summary_for_paper/Fuku-A/Fuku_all_to_F1-A.csv")
 
 
@@ -326,13 +390,13 @@ gblup <- read.csv("res_summary_G-BLUP_Fukushima_F1-B.csv",row.names = 1)
 dominance <- read.csv("res_summary_dominance_Fukushima_F1-B.csv",row.names = 1)
 gauss <- read.csv("res_summary_GAUSS_Fukushima_F1-B.csv",row.names = 1)
 
-inb <- matrix(NA,nr=11,nc=6)
-A <- matrix(NA,nr=11,nc=6)
-B <- matrix(NA,nr=11,nc=6)
-inbA <- matrix(NA,nr=11,nc=6)
-inbB <- matrix(NA,nr=11,nc=6)
-AB <- matrix(NA,nr=11,nc=6)
-inbAB <- matrix(NA,nr=11,nc=6)
+inb <- matrix(NA,nr=11,nc=9)
+A <- matrix(NA,nr=11,nc=9)
+B <- matrix(NA,nr=11,nc=9)
+inbA <- matrix(NA,nr=11,nc=9)
+inbB <- matrix(NA,nr=11,nc=9)
+AB <- matrix(NA,nr=11,nc=9)
+inbAB <- matrix(NA,nr=11,nc=9)
 
 rownames(inb) <- trait
 colnames(inb) <- col2
@@ -355,6 +419,9 @@ inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
+inb[,7] <- gblup[,1+14]
+inb[,8] <- dominance[,1+14]
+inb[,9] <- gauss[,1+14]
 write.csv(inb,"summary_for_paper/Fuku-B/Fuku_inbred_to_F1-B.csv")
 
 A[,1] <- gblup[,2]
@@ -363,6 +430,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
+A[,7] <- gblup[,2+14]
+A[,8] <- dominance[,2+14]
+A[,9] <- gauss[,2+14]
 write.csv(A,"summary_for_paper/Fuku-B/Fuku_F1-A_to_F1-B.csv")
 
 B[,1] <- gblup[,3]
@@ -371,6 +441,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
+B[,7] <- gblup[,3+14]
+B[,8] <- dominance[,3+14]
+B[,9] <- gauss[,3+14]
 write.csv(B,"summary_for_paper/Fuku-B/Fuku_F1-B_to_F1-B.csv")
 
 inbA[,1] <- gblup[,4]
@@ -379,6 +452,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
+inbA[,7] <- gblup[,4+14]
+inbA[,8] <- dominance[,4+14]
+inbA[,9] <- gauss[,4+14]
 write.csv(inbA,"summary_for_paper/Fuku-B/Fuku_inbred+F1-A_to_F1-B.csv")
 
 inbB[,1] <- gblup[,5]
@@ -387,6 +463,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
+inbB[,7] <- gblup[,5+14]
+inbB[,8] <- dominance[,5+14]
+inbB[,9] <- gauss[,5+14]
 write.csv(inbB,"summary_for_paper/Fuku-B/Fuku_inbred+F1-B_to_F1-B.csv")
 
 AB[,1] <- gblup[,6]
@@ -395,6 +474,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
+AB[,7] <- gblup[,6+14]
+AB[,8] <- dominance[,6+14]
+AB[,9] <- gauss[,6+14]
 write.csv(AB,"summary_for_paper/Fuku-B/Fuku_F1-A+B_to_F1-B.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -403,5 +485,8 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
+inbAB[,7] <- gblup[,7+14]
+inbAB[,8] <- dominance[,7+14]
+inbAB[,9] <- gauss[,7+14]
 write.csv(inbAB,"summary_for_paper/Fuku-B/Fuku_all_to_F1-B.csv")
 
