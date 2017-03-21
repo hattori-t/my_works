@@ -92,15 +92,21 @@ colnames(AB) <- col2
 rownames(inbAB) <- trait
 colnames(inbAB) <- col2
 
+pheno_A <- read.csv("data/Mexico2013~15_F1-A.csv",row.names = 1)
+var_A <- c(var(pheno_A,na.rm = T)[1,1], var(pheno_A,na.rm = T)[2,2], var(pheno_A,na.rm = T)[3,3],
+           var(pheno_A,na.rm = T)[4,4], var(pheno_A,na.rm = T)[5,5], var(pheno_A,na.rm = T)[6,6],
+           var(pheno_A,na.rm = T)[7,7], var(pheno_A,na.rm = T)[8,8], var(pheno_A,na.rm = T)[9,9],
+           var(pheno_A,na.rm = T)[10,10], var(pheno_A,na.rm = T)[11,11])
+
 inb[,1] <- gblup[,1]
 inb[,2] <- dominance[,1]
 inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
-inb[,7] <- gblup[,1+14]
-inb[,8] <- dominance[,1+14]
-inb[,9] <- gauss[,1+14]
+inb[,7] <- gblup[,1+14]^2/var_A
+inb[,8] <- dominance[,1+14]^2/var_A
+inb[,9] <- gauss[,1+14]^2/var_A
 write.csv(inb,"summary_for_paper/MEX-A/MEX_inbred_to_F1-A.csv")
 
 A[,1] <- gblup[,2]
@@ -109,9 +115,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
-A[,7] <- gblup[,2+14]
-A[,8] <- dominance[,2+14]
-A[,9] <- gauss[,2+14]
+A[,7] <- gblup[,2+14]^2/var_A
+A[,8] <- dominance[,2+14]^2/var_A
+A[,9] <- gauss[,2+14]^2/var_A
 write.csv(A,"summary_for_paper/MEX-A/MEX_F1-A_to_F1-A.csv")
 
 B[,1] <- gblup[,3]
@@ -120,9 +126,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
-B[,7] <- gblup[,3+14]
-B[,8] <- dominance[,3+14]
-B[,9] <- gauss[,3+14]
+B[,7] <- gblup[,3+14]^2/var_A
+B[,8] <- dominance[,3+14]^2/var_A
+B[,9] <- gauss[,3+14]^2/var_A
 write.csv(B,"summary_for_paper/MEX-A/MEX_F1-B_to_F1-A.csv")
 
 inbA[,1] <- gblup[,4]
@@ -131,9 +137,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
-inbA[,7] <- gblup[,4+14]
-inbA[,8] <- dominance[,4+14]
-inbA[,9] <- gauss[,4+14]
+inbA[,7] <- gblup[,4+14]^2/var_A
+inbA[,8] <- dominance[,4+14]^2/var_A
+inbA[,9] <- gauss[,4+14]^2/var_A
 write.csv(inbA,"summary_for_paper/MEX-A/MEX_inbred+F1-A_to_F1-A.csv")
 
 inbB[,1] <- gblup[,5]
@@ -142,9 +148,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
-inbB[,7] <- gblup[,5+14]
-inbB[,8] <- dominance[,5+14]
-inbB[,9] <- gauss[,5+14]
+inbB[,7] <- gblup[,5+14]^2/var_A
+inbB[,8] <- dominance[,5+14]^2/var_A
+inbB[,9] <- gauss[,5+14]^2/var_A
 write.csv(inbB,"summary_for_paper/MEX-A/MEX_inbred+F1-B_to_F1-A.csv")
 
 AB[,1] <- gblup[,6]
@@ -153,9 +159,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
-AB[,7] <- gblup[,6+14]
-AB[,8] <- dominance[,6+14]
-AB[,9] <- gauss[,6+14]
+AB[,7] <- gblup[,6+14]^2/var_A
+AB[,8] <- dominance[,6+14]^2/var_A
+AB[,9] <- gauss[,6+14]^2/var_A
 write.csv(AB,"summary_for_paper/MEX-A/MEX_F1-A+B_to_F1-A.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -164,9 +170,9 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
-inbAB[,7] <- gblup[,7+14]
-inbAB[,8] <- dominance[,7+14]
-inbAB[,9] <- gauss[,7+14]
+inbAB[,7] <- gblup[,7+14]^2/var_A
+inbAB[,8] <- dominance[,7+14]^2/var_A
+inbAB[,9] <- gauss[,7+14]^2/var_A
 write.csv(inbAB,"summary_for_paper/MEX-A/MEX_all_to_F1-A.csv")
 
 
@@ -199,15 +205,21 @@ colnames(AB) <- col2
 rownames(inbAB) <- trait
 colnames(inbAB) <- col2
 
+pheno_B <- read.csv("data/Mexico2013~15_F1-B.csv",row.names = 1)
+var_B <- c(var(pheno_B,na.rm = T)[1,1], var(pheno_B,na.rm = T)[2,2], var(pheno_B,na.rm = T)[3,3],
+           var(pheno_B,na.rm = T)[4,4], var(pheno_B,na.rm = T)[5,5], var(pheno_B,na.rm = T)[6,6],
+           var(pheno_B,na.rm = T)[7,7], var(pheno_B,na.rm = T)[8,8], var(pheno_B,na.rm = T)[9,9],
+           var(pheno_B,na.rm = T)[10,10], var(pheno_B,na.rm = T)[11,11])
+
 inb[,1] <- gblup[,1]
 inb[,2] <- dominance[,1]
 inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
-inb[,7] <- gblup[,1+14]
-inb[,8] <- dominance[,1+14]
-inb[,9] <- gauss[,1+14]
+inb[,7] <- gblup[,1+14]^2/var_B
+inb[,8] <- dominance[,1+14]^2/var_B
+inb[,9] <- gauss[,1+14]^2/var_B
 write.csv(inb,"summary_for_paper/MEX-B/MEX_inbred_to_F1-B.csv")
 
 A[,1] <- gblup[,2]
@@ -216,9 +228,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
-A[,7] <- gblup[,2+14]
-A[,8] <- dominance[,2+14]
-A[,9] <- gauss[,2+14]
+A[,7] <- gblup[,2+14]^2/var_B
+A[,8] <- dominance[,2+14]^2/var_B
+A[,9] <- gauss[,2+14]^2/var_B
 write.csv(A,"summary_for_paper/MEX-B/MEX_F1-A_to_F1-B.csv")
 
 B[,1] <- gblup[,3]
@@ -227,9 +239,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
-B[,7] <- gblup[,3+14]
-B[,8] <- dominance[,3+14]
-B[,9] <- gauss[,3+14]
+B[,7] <- gblup[,3+14]^2/var_B
+B[,8] <- dominance[,3+14]^2/var_B
+B[,9] <- gauss[,3+14]^2/var_B
 write.csv(B,"summary_for_paper/MEX-B/MEX_F1-B_to_F1-B.csv")
 
 inbA[,1] <- gblup[,4]
@@ -238,9 +250,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
-inbA[,7] <- gblup[,4+14]
-inbA[,8] <- dominance[,4+14]
-inbA[,9] <- gauss[,4+14]
+inbA[,7] <- gblup[,4+14]^2/var_B
+inbA[,8] <- dominance[,4+14]^2/var_B
+inbA[,9] <- gauss[,4+14]^2/var_B
 write.csv(inbA,"summary_for_paper/MEX-B/MEX_inbred+F1-A_to_F1-B.csv")
 
 inbB[,1] <- gblup[,5]
@@ -249,9 +261,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
-inbB[,7] <- gblup[,5+14]
-inbB[,8] <- dominance[,5+14]
-inbB[,9] <- gauss[,5+14]
+inbB[,7] <- gblup[,5+14]^2/var_B
+inbB[,8] <- dominance[,5+14]^2/var_B
+inbB[,9] <- gauss[,5+14]^2/var_B
 write.csv(inbB,"summary_for_paper/MEX-B/MEX_inbred+F1-B_to_F1-B.csv")
 
 AB[,1] <- gblup[,6]
@@ -260,9 +272,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
-AB[,7] <- gblup[,6+14]
-AB[,8] <- dominance[,6+14]
-AB[,9] <- gauss[,6+14]
+AB[,7] <- gblup[,6+14]^2/var_B
+AB[,8] <- dominance[,6+14]^2/var_B
+AB[,9] <- gauss[,6+14]^2/var_B
 write.csv(AB,"summary_for_paper/MEX-B/MEX_F1-A+B_to_F1-B.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -271,9 +283,9 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
-inbAB[,7] <- gblup[,7+14]
-inbAB[,8] <- dominance[,7+14]
-inbAB[,9] <- gauss[,7+14]
+inbAB[,7] <- gblup[,7+14]^2/var_B
+inbAB[,8] <- dominance[,7+14]^2/var_B
+inbAB[,9] <- gauss[,7+14]^2/var_B
 write.csv(inbAB,"summary_for_paper/MEX-B/MEX_all_to_F1-B.csv")
 
 
@@ -306,15 +318,21 @@ colnames(AB) <- col2
 rownames(inbAB) <- trait
 colnames(inbAB) <- col2
 
+pheno_A <- read.csv("data/Fukushima2013~15_F1-A.csv",row.names = 1)
+var_A <- c(var(pheno_A,na.rm = T)[1,1], var(pheno_A,na.rm = T)[2,2], var(pheno_A,na.rm = T)[3,3],
+           var(pheno_A,na.rm = T)[4,4], var(pheno_A,na.rm = T)[5,5], var(pheno_A,na.rm = T)[6,6],
+           var(pheno_A,na.rm = T)[7,7], var(pheno_A,na.rm = T)[8,8], var(pheno_A,na.rm = T)[9,9],
+           var(pheno_A,na.rm = T)[10,10], var(pheno_A,na.rm = T)[11,11])
+
 inb[,1] <- gblup[,1]
 inb[,2] <- dominance[,1]
 inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
-inb[,7] <- gblup[,1+14]
-inb[,8] <- dominance[,1+14]
-inb[,9] <- gauss[,1+14]
+inb[,7] <- gblup[,1+14]^2/var_A
+inb[,8] <- dominance[,1+14]^2/var_A
+inb[,9] <- gauss[,1+14]^2/var_A
 write.csv(inb,"summary_for_paper/Fuku-A/Fuku_inbred_to_F1-A.csv")
 
 A[,1] <- gblup[,2]
@@ -323,9 +341,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
-A[,7] <- gblup[,2+14]
-A[,8] <- dominance[,2+14]
-A[,9] <- gauss[,2+14]
+A[,7] <- gblup[,2+14]^2/var_A
+A[,8] <- dominance[,2+14]^2/var_A
+A[,9] <- gauss[,2+14]^2/var_A
 write.csv(A,"summary_for_paper/Fuku-A/Fuku_F1-A_to_F1-A.csv")
 
 B[,1] <- gblup[,3]
@@ -334,9 +352,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
-B[,7] <- gblup[,3+14]
-B[,8] <- dominance[,3+14]
-B[,9] <- gauss[,3+14]
+B[,7] <- gblup[,3+14]^2/var_A
+B[,8] <- dominance[,3+14]^2/var_A
+B[,9] <- gauss[,3+14]^2/var_A
 write.csv(B,"summary_for_paper/Fuku-A/Fuku_F1-B_to_F1-A.csv")
 
 inbA[,1] <- gblup[,4]
@@ -345,9 +363,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
-inbA[,7] <- gblup[,4+14]
-inbA[,8] <- dominance[,4+14]
-inbA[,9] <- gauss[,4+14]
+inbA[,7] <- gblup[,4+14]^2/var_A
+inbA[,8] <- dominance[,4+14]^2/var_A
+inbA[,9] <- gauss[,4+14]^2/var_A
 write.csv(inbA,"summary_for_paper/Fuku-A/Fuku_inbred+F1-A_to_F1-A.csv")
 
 inbB[,1] <- gblup[,5]
@@ -356,9 +374,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
-inbB[,7] <- gblup[,5+14]
-inbB[,8] <- dominance[,5+14]
-inbB[,9] <- gauss[,5+14]
+inbB[,7] <- gblup[,5+14]^2/var_A
+inbB[,8] <- dominance[,5+14]^2/var_A
+inbB[,9] <- gauss[,5+14]^2/var_A
 write.csv(inbB,"summary_for_paper/Fuku-A/Fuku_inbred+F1-B_to_F1-A.csv")
 
 AB[,1] <- gblup[,6]
@@ -367,9 +385,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
-AB[,7] <- gblup[,6+14]
-AB[,8] <- dominance[,6+14]
-AB[,9] <- gauss[,6+14]
+AB[,7] <- gblup[,6+14]^2/var_A
+AB[,8] <- dominance[,6+14]^2/var_A
+AB[,9] <- gauss[,6+14]^2/var_A
 write.csv(AB,"summary_for_paper/Fuku-A/Fuku_F1-A+B_to_F1-A.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -378,9 +396,9 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
-inbAB[,7] <- gblup[,7+14]
-inbAB[,8] <- dominance[,7+14]
-inbAB[,9] <- gauss[,7+14]
+inbAB[,7] <- gblup[,7+14]^2/var_A
+inbAB[,8] <- dominance[,7+14]^2/var_A
+inbAB[,9] <- gauss[,7+14]^2/var_A
 write.csv(inbAB,"summary_for_paper/Fuku-A/Fuku_all_to_F1-A.csv")
 
 
@@ -413,15 +431,21 @@ colnames(AB) <- col2
 rownames(inbAB) <- trait
 colnames(inbAB) <- col2
 
+pheno_B <- read.csv("data/Fukushima2013~15_F1-B.csv",row.names = 1)
+var_B <- c(var(pheno_B,na.rm = T)[1,1], var(pheno_B,na.rm = T)[2,2], var(pheno_B,na.rm = T)[3,3],
+           var(pheno_B,na.rm = T)[4,4], var(pheno_B,na.rm = T)[5,5], var(pheno_B,na.rm = T)[6,6],
+           var(pheno_B,na.rm = T)[7,7], var(pheno_B,na.rm = T)[8,8], var(pheno_B,na.rm = T)[9,9],
+           var(pheno_B,na.rm = T)[10,10], var(pheno_B,na.rm = T)[11,11])
+
 inb[,1] <- gblup[,1]
 inb[,2] <- dominance[,1]
 inb[,3] <- gauss[,1]
 inb[,4] <- gblup[,1+7]
 inb[,5] <- dominance[,1+7]
 inb[,6] <- gauss[,1+7]
-inb[,7] <- gblup[,1+14]
-inb[,8] <- dominance[,1+14]
-inb[,9] <- gauss[,1+14]
+inb[,7] <- gblup[,1+14]^2/var_B
+inb[,8] <- dominance[,1+14]^2/var_B
+inb[,9] <- gauss[,1+14]^2/var_B
 write.csv(inb,"summary_for_paper/Fuku-B/Fuku_inbred_to_F1-B.csv")
 
 A[,1] <- gblup[,2]
@@ -430,9 +454,9 @@ A[,3] <- gauss[,2]
 A[,4] <- gblup[,2+7]
 A[,5] <- dominance[,2+7]
 A[,6] <- gauss[,2+7]
-A[,7] <- gblup[,2+14]
-A[,8] <- dominance[,2+14]
-A[,9] <- gauss[,2+14]
+A[,7] <- gblup[,2+14]^2/var_B
+A[,8] <- dominance[,2+14]^2/var_B
+A[,9] <- gauss[,2+14]^2/var_B
 write.csv(A,"summary_for_paper/Fuku-B/Fuku_F1-A_to_F1-B.csv")
 
 B[,1] <- gblup[,3]
@@ -441,9 +465,9 @@ B[,3] <- gauss[,3]
 B[,4] <- gblup[,3+7]
 B[,5] <- dominance[,3+7]
 B[,6] <- gauss[,3+7]
-B[,7] <- gblup[,3+14]
-B[,8] <- dominance[,3+14]
-B[,9] <- gauss[,3+14]
+B[,7] <- gblup[,3+14]^2/var_B
+B[,8] <- dominance[,3+14]^2/var_B
+B[,9] <- gauss[,3+14]^2/var_B
 write.csv(B,"summary_for_paper/Fuku-B/Fuku_F1-B_to_F1-B.csv")
 
 inbA[,1] <- gblup[,4]
@@ -452,9 +476,9 @@ inbA[,3] <- gauss[,4]
 inbA[,4] <- gblup[,4+7]
 inbA[,5] <- dominance[,4+7]
 inbA[,6] <- gauss[,4+7]
-inbA[,7] <- gblup[,4+14]
-inbA[,8] <- dominance[,4+14]
-inbA[,9] <- gauss[,4+14]
+inbA[,7] <- gblup[,4+14]^2/var_B
+inbA[,8] <- dominance[,4+14]^2/var_B
+inbA[,9] <- gauss[,4+14]^2/var_B
 write.csv(inbA,"summary_for_paper/Fuku-B/Fuku_inbred+F1-A_to_F1-B.csv")
 
 inbB[,1] <- gblup[,5]
@@ -463,9 +487,9 @@ inbB[,3] <- gauss[,5]
 inbB[,4] <- gblup[,5+7]
 inbB[,5] <- dominance[,5+7]
 inbB[,6] <- gauss[,5+7]
-inbB[,7] <- gblup[,5+14]
-inbB[,8] <- dominance[,5+14]
-inbB[,9] <- gauss[,5+14]
+inbB[,7] <- gblup[,5+14]^2/var_B
+inbB[,8] <- dominance[,5+14]^2/var_B
+inbB[,9] <- gauss[,5+14]^2/var_B
 write.csv(inbB,"summary_for_paper/Fuku-B/Fuku_inbred+F1-B_to_F1-B.csv")
 
 AB[,1] <- gblup[,6]
@@ -474,9 +498,9 @@ AB[,3] <- gauss[,6]
 AB[,4] <- gblup[,6+7]
 AB[,5] <- dominance[,6+7]
 AB[,6] <- gauss[,6+7]
-AB[,7] <- gblup[,6+14]
-AB[,8] <- dominance[,6+14]
-AB[,9] <- gauss[,6+14]
+AB[,7] <- gblup[,6+14]^2/var_B
+AB[,8] <- dominance[,6+14]^2/var_B
+AB[,9] <- gauss[,6+14]^2/var_B
 write.csv(AB,"summary_for_paper/Fuku-B/Fuku_F1-A+B_to_F1-B.csv")
 
 inbAB[,1] <- gblup[,7]
@@ -485,8 +509,8 @@ inbAB[,3] <- gauss[,7]
 inbAB[,4] <- gblup[,7+7]
 inbAB[,5] <- dominance[,7+7]
 inbAB[,6] <- gauss[,7+7]
-inbAB[,7] <- gblup[,7+14]
-inbAB[,8] <- dominance[,7+14]
-inbAB[,9] <- gauss[,7+14]
+inbAB[,7] <- gblup[,7+14]^2/var_B
+inbAB[,8] <- dominance[,7+14]^2/var_B
+inbAB[,9] <- gauss[,7+14]^2/var_B
 write.csv(inbAB,"summary_for_paper/Fuku-B/Fuku_all_to_F1-B.csv")
 
