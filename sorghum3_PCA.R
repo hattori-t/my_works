@@ -11,7 +11,7 @@ colnames(geno) <- gsub("EN12.","EN12-",colnames(geno))
 linename <- c(rownames(mex),rownames(fuku))
 linename <- unique(linename)
 Linename <- intersect(linename,colnames(geno))
-Geno <- geno[,Pheno]
+Geno <- geno[,Linename]
 
 
 ## factor analysis
@@ -36,6 +36,20 @@ color[grep("B2\\/",Linename)] <- 2
 color[grep("B31\\/",Linename)] <- 3
 
 text(res2$loadings,Linename,col=color)
+
+
+## dendrogram
+mex_inbred <- read.csv("data/Mexico2013~15_inbred.csv", row.names=1)
+fuku_inbred <- read.csv("data/Fukushima2013~15_inbred.csv", row.names=1)
+
+namae <- c(rownames(mex_inbred),rownames(fuku_inbred))
+namae <- unique(namae)
+Namae <- intersect(namae,colnames(geno))
+Geno_inbred <- geno[,Namae]
+
+d <- dist(t(Geno_inbred))
+tre <- hclust(d,method = "ward.D2")
+plot(tre,cex=0.5)
 
 
 ## how different are inbreds and F1-A(orB)?? (notFinished)
