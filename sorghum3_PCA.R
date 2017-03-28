@@ -28,8 +28,9 @@ text(res$loadings,Linename,col=color)
 
 ## principal component analysis
 res2 <- princomp(Geno)
+summary(res2) #PCA1 is 48.1%, PCA2 is 7.3%
 
-plot(res2$loadings, type = "n", xlab = "comp.1", ylab = "comp.2")
+plot(res2$loadings, type = "n", xlab = "PCA1 (48.1%)", ylab = "PCA2 (7.3%)")
 
 color <- rep(1, length(Linename))
 color[grep("B2\\/",Linename)] <- 2
